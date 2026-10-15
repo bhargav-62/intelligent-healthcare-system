@@ -1,0 +1,808 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCare AI | Symptom Pattern Explorer</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blue: #2457d6;
+      --purple: #7057d9;
+      --ink: #182238;
+      --muted: #68738a;
+      --line: #e4e9f2;
+      --bg: #f4f7fc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #e6edff 0, transparent 34%), var(--bg);
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffffffed;
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: auto;
+      padding: 17px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 21px;
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: white;
+      font-size: 23px;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .hero {
+      max-width: 1180px;
+      margin: 38px auto 24px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .hero-main {
+      padding: 38px;
+      border-radius: 26px;
+      color: white;
+      background: linear-gradient(125deg, #214fc5, #7658d9);
+      box-shadow: 0 18px 40px #354e9c25;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      border: 1px solid #ffffff5c;
+      background: #ffffff18;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.12;
+      margin: 20px 0 14px;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-main p {
+      line-height: 1.7;
+      color: #eef1ff;
+      max-width: 700px;
+    }
+
+    .hero-side {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 10px 30px #1d31500b;
+    }
+
+    .hero-side .emoji {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .hero-side h2 {
+      font-size: 19px;
+      margin-bottom: 10px;
+    }
+
+    .hero-side p {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 50px;
+    }
+
+    .notice {
+      padding: 17px 19px;
+      border: 1px solid #edc45b;
+      background: #fff5d9;
+      border-radius: 15px;
+      color: #705316;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .notice strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 12px 35px #1d31500b;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .panel h2 {
+      font-size: 23px;
+      letter-spacing: -0.03em;
+    }
+
+    .sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 7px;
+      line-height: 1.55;
+    }
+
+    .count {
+      background: #edf2ff;
+      color: var(--blue);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    input[type="search"] {
+      flex: 1;
+      min-width: 220px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    input[type="search"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px #2457d61a;
+    }
+
+    .small-btn,
+    .primary-btn,
+    .secondary-btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .small-btn,
+    .secondary-btn {
+      background: #eef2f8;
+      color: var(--ink);
+    }
+
+    .primary-btn {
+      background: linear-gradient(120deg, var(--blue), var(--purple));
+      color: white;
+      box-shadow: 0 8px 18px #2457d629;
+    }
+
+    .small-btn:hover,
+    .secondary-btn:hover,
+    .primary-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .symptoms {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      max-height: 510px;
+      overflow: auto;
+      padding: 2px 3px 2px 0;
+    }
+
+    .symptom {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      min-height: 54px;
+      transition: 0.15s;
+    }
+
+    .symptom:hover {
+      border-color: #aabaf5;
+      background: #f8faff;
+    }
+
+    .symptom:has(input:checked) {
+      border-color: var(--blue);
+      background: #eef3ff;
+    }
+
+    .symptom input {
+      accent-color: var(--blue);
+      margin-top: 3px;
+    }
+
+    .symptom span {
+      font-size: 13px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .selected-count {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .loading {
+      display: none;
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .results {
+      display: none;
+      margin-top: 24px;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .result-top {
+      border-radius: 18px;
+      background: #eef3ff;
+      padding: 23px;
+      border: 1px solid #d8e2ff;
+    }
+
+    .result-top .tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--blue);
+    }
+
+    .result-top h3 {
+      font-size: 27px;
+      margin: 9px 0;
+    }
+
+    .result-top p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .score-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid var(--line);
+      padding: 14px;
+      border-radius: 12px;
+    }
+
+    .score-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .score-note {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .score-value {
+      font-weight: 800;
+      color: var(--blue);
+      font-size: 14px;
+    }
+
+    .result-warning {
+      margin-top: 16px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #fff4e5;
+      border: 1px solid #ffd39a;
+      color: #814a0a;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .urgent {
+      background: #fff0f0;
+      border-color: #ffbcbc;
+      color: #8b1c1c;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 24px 30px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 850px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .symptoms {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      nav {
+        gap: 12px;
+      }
+
+      nav a {
+        font-size: 12px;
+      }
+
+      .nav {
+        padding: 13px 16px;
+      }
+
+      .hero,
+      main {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .hero-main,
+      .hero-side,
+      .panel {
+        padding: 22px;
+      }
+
+      .symptoms {
+        grid-template-columns: 1fr;
+      }
+
+      .panel-head {
+        flex-direction: column;
+      }
+
+      .form-actions {
+        align-items: stretch;
+      }
+
+      .primary-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="nav">
+    <a class="brand" href="/">
+      <span class="brand-icon">✚</span>
+      <span>MediCare AI</span>
+    </a>
+
+    <nav>
+      <a href="#explorer">Symptom explorer</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-main">
+    <span class="eyebrow">Educational ML prototype</span>
+
+    <h1>Explore symptom patterns with AI.</h1>
+
+    <p>
+      Select symptoms from the model's feature list to see the output
+      of an experimental machine-learning classifier. This tool is
+      for learning and demonstration, not for diagnosing or treating
+      health conditions.
+    </p>
+  </div>
+
+  <aside class="hero-side">
+    <div class="emoji">🩺</div>
+    <h2>Use health information carefully</h2>
+
+    <p>
+      The underlying dataset has limited distinct patterns and has
+      not been clinically validated. Model scores are not medical
+      probabilities or a measure of how ill someone is.
+    </p>
+  </aside>
+</section>
+
+<main id="explorer">
+
+  {% if not model_loaded %}
+  <div class="notice">
+    <strong>⚠️ Model not loaded</strong>
+    The model file could not be loaded. Check the Flask terminal and
+    confirm <code>models/baseline_symptom_model.joblib</code> exists.
+  </div>
+  {% endif %}
+
+  <div class="notice">
+    <strong>Important medical disclaimer</strong>
+    Do not use this prototype to make medical decisions, select
+    medicines, or delay care. For severe or rapidly worsening
+    symptoms—including trouble breathing, chest pain, fainting, or
+    sudden weakness—seek urgent local medical care.
+  </div>
+
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Symptom pattern explorer</h2>
+        <p class="sub">
+          Choose all applicable symptoms. The model accepts
+          {{ symptoms|length }} binary symptom features.
+        </p>
+      </div>
+
+      <span class="count">{{ symptoms|length }} features</span>
+    </div>
+
+    <div class="toolbar">
+      <input
+        id="symptomSearch"
+        type="search"
+        placeholder="Search symptoms, e.g. cough or headache"
+        aria-label="Search symptoms"
+      >
+
+      <button type="button" class="small-btn" id="selectNone">
+        Clear selection
+      </button>
+    </div>
+
+    <div class="symptoms" id="symptomList">
+      {% for symptom in symptoms %}
+      <label
+        class="symptom"
+        data-search="{{ symptom.name|lower }} {{ symptom.label|lower }}"
+      >
+        <input
+          type="checkbox"
+          name="symptom"
+          value="{{ symptom.name }}"
+        >
+
+        <span>{{ symptom.label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+
+    <div class="form-actions">
+      <span class="selected-count" id="selectedCount">
+        0 symptoms selected
+      </span>
+
+      <button
+        class="primary-btn"
+        id="analyzeBtn"
+        type="button"
+        {% if not model_loaded %}disabled{% endif %}
+      >
+        Analyze symptom pattern →
+      </button>
+    </div>
+
+    <div class="loading" id="loading" role="status">
+      Running the experimental model…
+    </div>
+
+    <section class="results" id="results" aria-live="polite"></section>
+  </section>
+</main>
+
+<footer>
+  © 2026 MediCare AI · Educational prototype only · Not a medical
+  device or a substitute for professional healthcare.
+</footer>
+
+<script>
+  const API_URL = "/predict";
+
+  const symptomInputs = [
+    ...document.querySelectorAll('input[name="symptom"]')
+  ];
+
+  const selectedCount = document.getElementById("selectedCount");
+  const results = document.getElementById("results");
+  const loading = document.getElementById("loading");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+
+  function updateCount() {
+    const count = symptomInputs.filter(
+      input => input.checked
+    ).length;
+
+    selectedCount.textContent =
+      `${count} symptom${count === 1 ? "" : "s"} selected`;
+  }
+
+  symptomInputs.forEach(input => {
+    input.addEventListener("change", updateCount);
+  });
+
+  document
+    .getElementById("symptomSearch")
+    .addEventListener("input", event => {
+      const query = event.target.value.trim().toLowerCase();
+
+      document.querySelectorAll(".symptom").forEach(card => {
+        card.hidden = !card.dataset.search.includes(query);
+      });
+    });
+
+  document
+    .getElementById("selectNone")
+    .addEventListener("click", () => {
+      symptomInputs.forEach(input => {
+        input.checked = false;
+      });
+
+      updateCount();
+      results.classList.remove("show");
+      results.innerHTML = "";
+    });
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function renderResults(data) {
+    const predictions = data.model_scores || [];
+    const urgent = data.urgent_notice;
+
+    results.innerHTML = `
+      <div class="result-top">
+        <span class="tag">
+          Experimental model output · Not a diagnosis
+        </span>
+
+        <h3>
+          ${escapeHtml(data.educational_prediction || "No prediction")}
+        </h3>
+
+        <p>
+          The classifier matched the selected symptom pattern to
+          a label in its training dataset. This result does not
+          confirm that the condition is present.
+        </p>
+      </div>
+
+      <div class="score-list">
+        ${predictions.map((item, index) => `
+          <div class="score-row">
+            <div>
+              <div class="score-name">
+                ${index + 1}. ${escapeHtml(item.disease)}
+              </div>
+
+              <div class="score-note">
+                Relative model score; not clinical confidence
+              </div>
+            </div>
+
+            <div class="score-value">
+              ${
+                item.score == null
+                  ? "N/A"
+                  : escapeHtml(item.score) + "%"
+              }
+            </div>
+          </div>
+        `).join("")}
+      </div>
+
+      ${
+        urgent
+          ? `
+            <div class="result-warning urgent">
+              <strong>Urgent symptom selected.</strong>
+              This application cannot assess urgency reliably.
+              If this symptom is happening now—especially difficulty
+              breathing, chest pain, or sudden weakness—seek urgent
+              local medical care.
+            </div>
+          `
+          : ""
+      }
+
+      <div class="result-warning">
+        <strong>Safety reminder</strong><br>
+        ${escapeHtml(
+          data.disclaimer ||
+          "This is an educational output only. Consult a qualified healthcare professional for medical concerns."
+        )}
+      </div>
+    `;
+
+    results.classList.add("show");
+  }
+
+  analyzeBtn.addEventListener("click", async () => {
+    const symptoms = symptomInputs
+      .filter(input => input.checked)
+      .map(input => input.value);
+
+    if (symptoms.length === 0) {
+      alert("Please select at least one symptom to run the educational demo.");
+      return;
+    }
+
+    analyzeBtn.disabled = true;
+    loading.classList.add("show");
+    results.classList.remove("show");
+    results.innerHTML = "";
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ symptoms })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || `Request failed (${response.status})`
+        );
+      }
+
+      renderResults(data);
+
+    } catch (error) {
+      results.innerHTML = `
+        <div class="result-warning">
+          <strong>Could not run the model</strong><br>
+          ${escapeHtml(error.message)}<br>
+          Check that Flask is running and the model file is present.
+        </div>
+      `;
+
+      results.classList.add("show");
+
+    } finally {
+      loading.classList.remove("show");
+      analyzeBtn.disabled = false;
+
+      results.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  });
+
+  updateCount();
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About MediCare AI - Disease Prediction</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; padding: 60px 20px; }
+        .header h1 { font-size: 3.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.3em; opacity: 0.95; }
+        
+        .section { 
+            background: white; 
+            margin: 30px 0; 
+            padding: 40px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .section h2 { color: #0066FF; font-size: 2.2em; margin-bottom: 20px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px; }
+        .feature { text-align: center; padding: 30px; background: #f8f9ff; border-radius: 15px; border-left: 5px solid #0066FF; }
+        .feature h3 { color: #0066FF; font-size: 1.4em; margin-bottom: 15px; }
+        .tech-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+        .tech { background: #0066FF; color: white; padding: 10px 20px; border-radius: 25px; font-weight: 500; }
+        
+        .cta-button { 
+            display: inline-block; 
+            background: linear-gradient(45deg, #0066FF, #00d4ff); 
+            color: white; 
+            padding: 15px 40px; 
+            border-radius: 50px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            transition: transform 0.3s ease;
+        }
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,102,255,0.4); }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5em; }
+            .section { padding: 25px; margin: 20px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Header -->
+        <div class="header">
+            <h1>🏥 MediCare AI</h1>
+            <p>AI-Powered Disease Prediction & Treatment Recommendations</p>
+        </div>
+
+        <!-- About Section -->
+        <div class="section">
+            <h2>🚀 What is MediCare AI?</h2>
+            <p>Machine Learning platform that analyzes symptoms, age, gender, blood pressure, and cholesterol to predict diseases with 95%+ accuracy. Provides instant treatment recommendations and risk assessment using trained Random Forest models.</p>
+            <p>Built for rapid diagnosis in remote areas, clinics, and personal health monitoring. Processes 1000s of predictions per minute with Flask API backend.</p>
+        </div>
+
+        <!-- Features -->
+        <div class="section">
+            <h2>✨ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <h3>⚡ Instant Predictions</h3>
+                    <p>95%+ accuracy using ensemble ML models (RF, GB, LR)</p>
+                </div>
+                <div class="feature">
+                    <h3>💊 Treatment Database</h3>
+                    <p>Comprehensive medicine & advice for 15+ diseases</p>
+                </div>
+                <div class="feature">
+                    <h3>📊 Risk Assessment</h3>
+                    <p>Low/Medium/High risk scoring with confidence scores</p>
+                </div>
+                <div class="feature">
+                    <h3>🌐 Scalable API</h3>
+                    <p>Flask backend handles 1000+ requests/minute</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section">
+            <h2>🔧 Technology Stack</h2>
+            <div class="tech-stack">
+                <span class="tech">Python</span>
+                <span class="tech">Flask API</span>
+                <span class="tech">Scikit-learn</span>
+                <span class="tech">Pandas</span>
+                <span class="tech">Joblib</span>
+                <span class="tech">CORS</span>
+                <span class="tech">HTML/CSS</span>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align: center; padding: 40px;">
+            <a href="/" class="cta-button">🔙 Back to Predictor</a>
+        </div>
+    </div>
+</body>
+</html>

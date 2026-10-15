@@ -1,0 +1,51 @@
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test and coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Old backups
+app_backup.py
+index_backup.html
+
+# Local datasets: review permissions before sharing
+data/raw/
+Cleaned_Dataset.csv
+
+# Generated datasets and reports
+data/processed/*.csv
+data/processed/*report.json
+
+# Legacy model artifacts
+best_model.pkl
+disease_encoder.pkl
+medicine_database.pkl
+
+# Current trained model: keep local until its sharing and size are reviewed
+models/
