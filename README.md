@@ -227,7 +227,7 @@ Do not use real patient information in a public demo unless the application has 
 
 ## 👨‍💻 Author
 
-**Your Name**
+**https://github.com/bhargav-62**
 
 GitHub: https://github.com/YOUR-USERNAME
 
