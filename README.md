@@ -229,8 +229,6 @@ Do not use real patient information in a public demo unless the application has 
 
 **https://github.com/bhargav-62**
 
-GitHub: https://github.com/YOUR-USERNAME
-
 ## 📄 License
 
 Choose and add an appropriate open-source license before distributing this project publicly.
