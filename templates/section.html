@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | MediCare AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --background: #f5f7fc;
+            --white: #ffffff;
+            --text: #17233b;
+            --muted: #758098;
+            --border: #e8ebf4;
+            --blue: #315fe9;
+            --purple: #7656e8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .layout {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 220px minmax(0, 1fr);
+        }
+
+        aside {
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 24px 14px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 18px;
+            margin: 0 7px 32px;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 11px;
+            color: white;
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+        }
+
+        .brand span:last-child {
+            color: var(--blue);
+        }
+
+        .nav-label {
+            margin: 20px 10px 10px;
+            color: #98a1b5;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        nav {
+            display: grid;
+            gap: 5px;
+        }
+
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px;
+            border-radius: 11px;
+            color: #566078;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: .2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            background: #eaf0ff;
+            color: var(--blue);
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        main {
+            min-width: 0;
+            padding: 24px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search {
+            width: min(420px, 65%);
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: white;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .profile {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .profile small {
+            display: block;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        .heading {
+            margin: 30px 0 22px;
+        }
+
+        .heading h1 {
+            margin: 0 0 8px;
+            font-size: clamp(24px, 3vw, 32px);
+            letter-spacing: -1px;
+        }
+
+        .heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .notice {
+            padding: 14px 16px;
+            margin-bottom: 22px;
+            border: 1px solid #f0d99c;
+            border-radius: 12px;
+            background: #fff9e9;
+            color: #795c1b;
+            font-size: 11px;
+            line-height: 1.7;
+        }
+
+        .notice strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 17px;
+        }
+
+        .card {
+            padding: 22px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            box-shadow: 0 8px 28px rgba(30, 49, 92, .045);
+            min-width: 0;
+        }
+
+        .icon-box {
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            margin-bottom: 17px;
+            border-radius: 14px;
+            background: #edf2ff;
+            color: var(--blue);
+            font-size: 23px;
+        }
+
+        .card h2 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+
+        .card p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .feature-list {
+            padding: 0;
+            margin: 16px 0 0;
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            border-top: 1px solid #eef0f6;
+            color: #526078;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            color: #1ca887;
+            font-weight: 800;
+            margin-right: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: #fff4e4;
+            color: #a46713;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: linear-gradient(110deg, var(--blue), var(--purple));
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            opacity: .92;
+        }
+
+        footer {
+            padding: 25px 0 10px;
+            color: #929bb0;
+            font-size: 10px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            aside {
+                padding: 14px;
+                border-right: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .brand {
+                margin-bottom: 14px;
+            }
+
+            .nav-label {
+                display: none;
+            }
+
+            nav {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            nav a {
+                padding: 10px 7px;
+                gap: 6px;
+                font-size: 10px;
+            }
+
+            main {
+                padding: 16px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .search {
+                width: 60%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+    <aside>
+        <a class="brand" href="/">
+            <span class="brand-icon">M</span>
+            <span>MediCare AI</span>
+        </a>
+
+        <div class="nav-label">Workspace</div>
+
+        <nav aria-label="Main navigation">
+            <a href="/">
+                <span class="nav-icon">▦</span> Dashboard
+            </a>
+
+            <a href="/patients"
+               {% if active_page == 'patients' %}class="active"{% endif %}>
+                <span class="nav-icon">♙</span> Patients
+            </a>
+
+            <a href="/appointments"
+               {% if active_page == 'appointments' %}class="active"{% endif %}>
+                <span class="nav-icon">▣</span> Appointments
+            </a>
+
+            <a href="/records"
+               {% if active_page == 'records' %}class="active"{% endif %}>
+                <span class="nav-icon">▤</span> Health Records
+            </a>
+
+            <a href="/ai-insights">
+                <span class="nav-icon">✧</span> AI Insights
+            </a>
+
+            <a href="/diagnostics">
+                <span class="nav-icon">⌕</span> Diagnostics Demo
+            </a>
+
+            <a href="/treatments"
+               {% if active_page == 'treatments' %}class="active"{% endif %}>
+                <span class="nav-icon">✚</span> Treatments
+            </a>
+
+            <a href="/medications"
+               {% if active_page == 'medications' %}class="active"{% endif %}>
+                <span class="nav-icon">♧</span> Medications
+            </a>
+
+            <a href="/reports"
+               {% if active_page == 'reports' %}class="active"{% endif %}>
+                <span class="nav-icon">▧</span> Reports
+            </a>
+
+            <a href="/analytics"
+               {% if active_page == 'analytics' %}class="active"{% endif %}>
+                <span class="nav-icon">▥</span> Analytics
+            </a>
+
+            <a href="/alerts"
+               {% if active_page == 'alerts' %}class="active"{% endif %}>
+                <span class="nav-icon">♧</span> Alerts
+            </a>
+
+            <a href="/messages"
+               {% if active_page == 'messages' %}class="active"{% endif %}>
+                <span class="nav-icon">✉</span> Messages
+            </a>
+
+            <a href="/settings"
+               {% if active_page == 'settings' %}class="active"{% endif %}>
+                <span class="nav-icon">⚙</span> Settings
+            </a>
+        </nav>
+    </aside>
+
+    <main>
+        <header class="topbar">
+            <div class="search">⌕ &nbsp; MediCare AI / {{ page.title }}</div>
+            <div class="profile">
+                Demo Clinician
+                <small>Educational prototype</small>
+            </div>
+        </header>
+
+        <section class="heading">
+            <h1>{{ page.icon }} &nbsp; {{ page.title }}</h1>
+            <p>{{ page.subtitle }}</p>
+        </section>
+
+        <div class="notice">
+            <strong>Educational demonstration only</strong>
+            This section is a user-interface preview. It does not manage
+            real patients, appointments, medical records, prescriptions,
+            or clinical alerts.
+        </div>
+
+        <div class="grid">
+            <section class="card">
+                <div class="icon-box">{{ page.icon }}</div>
+
+                <h2>About this section</h2>
+
+                <p>{{ page.description }}</p>
+
+                <span class="status">Demo interface · Not connected to real records</span>
+
+                <div>
+                    <a class="button" href="/">← Return to dashboard</a>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Section overview</h2>
+
+                <p>
+                    The following items describe the interface and
+                    possible future development work.
+                </p>
+
+                <ul class="feature-list">
+                    {% for feature in page.features %}
+                    <li>{{ feature }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="card">
+                <div class="icon-box">✧</div>
+
+                <h2>AI symptom explorer</h2>
+
+                <p>
+                    Open the existing experimental machine-learning
+                    feature to explore symptom patterns from its
+                    educational dataset.
+                </p>
+
+                <p>
+                    Model loaded:
+                    <strong>{{ "Yes" if model_loaded else "No" }}</strong>
+                    <br>
+                    Symptom features: <strong>{{ feature_count }}</strong>
+                </p>
+
+                <a class="button" href="/explorer">
+                    Open symptom explorer →
+                </a>
+            </section>
+
+            <section class="card">
+                <div class="icon-box">ⓘ</div>
+
+                <h2>Safety and privacy</h2>
+
+                <p>
+                    Do not enter personal medical information into this
+                    demonstration. The model is not clinically validated
+                    and must not be used to diagnose conditions, choose
+                    medicines, or delay professional care.
+                </p>
+
+                <a class="button" href="/about">About this project →</a>
+            </section>
+        </div>
+
+        <footer>
+            MediCare AI · Student educational prototype<br>
+            Sample interface only · Not a medical device
+        </footer>
+    </main>
+</div>
+</body>
+</html>

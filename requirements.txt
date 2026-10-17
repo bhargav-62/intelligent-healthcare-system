@@ -1,7 +1,10 @@
 
 Flask
 Flask-Cors
+python-dotenv
+PyMySQL
 pandas
 scikit-learn
 joblib
 numpy
+gunicorn

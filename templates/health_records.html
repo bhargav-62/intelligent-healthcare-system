@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Records | MediCare AI</title>
+    <style>
+        :root {
+            --primary: #405cf5;
+            --text: #15233e;
+            --muted: #74819c;
+            --border: #e1e8f4;
+            --surface: #ffffff;
+            --background: #f3f6fc;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        main { max-width: 1600px; margin: auto; padding: 24px; }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        h1 { font-size: 27px; margin: 0 0 8px; }
+        h2 { font-size: 18px; margin: 0 0 8px; }
+        p { color: var(--muted); margin: 0; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 5px 20px rgba(35, 57, 105, .035);
+        }
+
+        .notice {
+            background: #fff9e9;
+            border: 1px solid #f5d48a;
+            border-radius: 12px;
+            padding: 14px;
+            color: #85510a;
+            margin-bottom: 18px;
+            font-size: 12px;
+        }
+
+        .alert {
+            display: none;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+
+        .alert.error { display: block; color: #b42335; background: #fff0f1; border: 1px solid #ffd0d5; }
+        .alert.success { display: block; color: #13734b; background: #eafaf1; border: 1px solid #bcebd0; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stat-label { color: var(--muted); font-size: 12px; }
+        .stat-number { font-size: 29px; font-weight: 750; margin-top: 10px; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 7px; }
+        .field.full { grid-column: 1 / -1; }
+        label { font-size: 12px; font-weight: 650; color: #536481; }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #dce4f2;
+            border-radius: 8px;
+            padding: 11px 12px;
+            color: var(--text);
+            background: white;
+            font: inherit;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px #405cf51a;
+        }
+
+        textarea { min-height: 85px; resize: vertical; }
+
+        .actions, .searchbar {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .actions { margin-top: 18px; }
+
+        button {
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 15px;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 650;
+        }
+
+        button:disabled { opacity: .6; cursor: wait; }
+        .primary { color: white; background: linear-gradient(110deg, #3562f5, #7551eb); }
+        .secondary { background: #edf2fb; color: #344767; }
+        .danger { background: #fff0f1; color: #c72d40; }
+        .small { padding: 7px 10px; font-size: 12px; }
+
+        .searchbar { margin: 18px 0 15px; }
+        .searchbar input { flex: 1; min-width: 200px; max-width: 520px; }
+
+        .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 13px 12px; text-align: left; border-bottom: 1px solid #e9edf5; }
+        th { background: #f6f8fc; color: #62718e; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+        td { font-size: 12px; }
+        tr:last-child td { border-bottom: 0; }
+        .muted { color: var(--muted); font-size: 12px; margin-top: 12px; }
+        .empty { text-align: center; padding: 28px; color: var(--muted); }
+        .record-title { font-weight: 700; }
+        .badge { display: inline-block; background: #eaf0ff; color: #3154d8; padding: 5px 8px; border-radius: 20px; }
+
+        @media (max-width: 800px) {
+            main { padding: 14px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .field.full { grid-column: auto; }
+            .stats { grid-template-columns: 1fr; }
+            .topbar { align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header class="topbar">
+        <div>
+            <p style="margin-bottom:8px">MediCare AI / Workspace</p>
+            <h1>▤ Health Records</h1>
+            <p>Store and manage patient-linked health records.</p>
+        </div>
+        <button class="primary" id="newRecordBtn" type="button">+ New record</button>
+    </header>
+
+    <div class="notice">
+        <strong>Development data</strong><br>
+        Use fictional patient data only. This prototype is not authenticated or suitable for real patient information.
+    </div>
+
+    <div id="message" class="alert" role="status" aria-live="polite"></div>
+
+    <section class="stats">
+        <div class="card">
+            <div class="stat-label">Total records</div>
+            <div class="stat-number" id="totalCount">—</div>
+        </div>
+        <div class="card">
+            <div class="stat-label">Record types</div>
+            <div class="stat-number" id="typeCount">—</div>
+        </div>
+        <div class="card">
+            <div class="stat-label">Linked patients</div>
+            <div class="stat-number" id="patientCount">—</div>
+        </div>
+    </section>
+
+    <section class="card" id="recordFormCard">
+        <h2 id="formTitle">Create health record</h2>
+        <p>Select a registered patient and enter the record details.</p>
+
+        <form id="recordForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label for="patient_id">Patient *</label>
+                    <select id="patient_id" required>
+                        <option value="">Loading patients...</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="record_type">Record type *</label>
+                    <select id="record_type" required>
+                        <option value="">Select type</option>
+                        <option value="Consultation">Consultation</option>
+                        <option value="Diagnosis">Diagnosis</option>
+                        <option value="Prescription">Prescription</option>
+                        <option value="Lab Report">Lab Report</option>
+                        <option value="Medical History">Medical History</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="recorded_at">Record date and time *</label>
+                    <input id="recorded_at" type="datetime-local" required>
+                </div>
+
+                <div class="field full">
+                    <label for="title">Title *</label>
+                    <input id="title" maxlength="255" required placeholder="e.g. Routine consultation">
+                </div>
+
+                <div class="field full">
+                    <label for="description">Description</label>
+                    <textarea id="description" maxlength="10000" placeholder="Enter fictional test record details"></textarea>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="primary" id="saveBtn" type="submit">Save record</button>
+                <button class="secondary" id="cancelEditBtn" type="button" hidden>Cancel editing</button>
+                <button class="secondary" type="reset" id="clearBtn">Clear form</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Health record history</h2>
+        <p>Search and manage records saved in MySQL.</p>
+
+        <div class="searchbar">
+            <input id="searchInput" type="search" placeholder="Search patient, title, type, or description">
+            <button class="secondary" id="searchBtn" type="button">Search</button>
+            <button class="secondary" id="refreshBtn" type="button">Refresh</button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Record</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsBody">
+                    <tr><td colspan="6" class="empty">Loading health records...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="muted" id="tableSummary">Loading...</div>
+    </section>
+
+    <p class="muted" style="text-align:center;margin:24px 0">
+        MediCare AI · Educational development prototype · Not a substitute for professional healthcare.
+    </p>
+</main>
+
+<script>
+"use strict";
+
+const API = "/api/health-records";
+const PATIENT_API = "/api/patients";
+
+const form = document.getElementById("recordForm");
+const patientSelect = document.getElementById("patient_id");
+const recordsBody = document.getElementById("recordsBody");
+const message = document.getElementById("message");
+
+let records = [];
+let patients = [];
+let editingId = null;
+
+function showMessage(text, kind = "error") {
+    message.textContent = text;
+    message.className = `alert ${kind}`;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function clearMessage() {
+    message.textContent = "";
+    message.className = "alert";
+}
+
+async function requestJSON(url, options = {}) {
+    const response = await fetch(url, options);
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || data.success === false) {
+        throw new Error(data.message || `Request failed (${response.status}).`);
+    }
+
+    return data;
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function localDateTimeValue(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 16);
+}
+
+function displayDate(value) {
+    if (!value) return "—";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
+}
+
+async function loadPatients() {
+    const data = await requestJSON(PATIENT_API);
+    patients = data.patients || [];
+
+    patientSelect.replaceChildren(new Option("Select a patient", ""));
+
+    for (const patient of patients) {
+        const name = `${patient.first_name || ""} ${patient.last_name || ""}`.trim();
+        const option = new Option(
+            `${patient.patient_code || ""} — ${name}`,
+            String(patient.patient_id)
+        );
+        patientSelect.add(option);
+    }
+}
+
+function updateStats() {
+    document.getElementById("totalCount").textContent = records.length;
+    document.getElementById("typeCount").textContent =
+        new Set(records.map(r => r.record_type).filter(Boolean)).size;
+    document.getElementById("patientCount").textContent =
+        new Set(records.map(r => r.patient_id)).size;
+}
+
+function renderRecords() {
+    updateStats();
+
+    if (!records.length) {
+        recordsBody.innerHTML =
+            '<tr><td colspan="6" class="empty">No health records found.</td></tr>';
+        document.getElementById("tableSummary").textContent = "Showing 0 records.";
+        return;
+    }
+
+    recordsBody.innerHTML = records.map(record => {
+        const patientName =
+            `${record.first_name || ""} ${record.last_name || ""}`.trim();
+
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHTML(patientName || "Unknown patient")}</strong>
+                    <div class="muted">${escapeHTML(record.patient_code || "")}</div>
+                </td>
+                <td><span class="record-title">${escapeHTML(record.title)}</span></td>
+                <td><span class="badge">${escapeHTML(record.record_type)}</span></td>
+                <td>${escapeHTML(displayDate(record.recorded_at))}</td>
+                <td>${escapeHTML(record.description || "—")}</td>
+                <td>
+                    <div class="actions" style="margin:0;flex-wrap:nowrap">
+                        <button class="secondary small" data-action="edit" data-id="${Number(record.record_id)}">Edit</button>
+                        <button class="danger small" data-action="delete" data-id="${Number(record.record_id)}">Delete</button>
+                    </div>
+                </td>
+            </tr>`;
+    }).join("");
+
+    document.getElementById("tableSummary").textContent =
+        `Showing ${records.length} record(s).`;
+}
+
+async function loadRecords(search = "") {
+    recordsBody.innerHTML =
+        '<tr><td colspan="6" class="empty">Loading health records...</td></tr>';
+
+    try {
+        const url = new URL(API, window.location.origin);
+        if (search) url.searchParams.set("search", search);
+
+        const data = await requestJSON(url);
+        records = data.records || [];
+        renderRecords();
+    } catch (error) {
+        records = [];
+        updateStats();
+        recordsBody.innerHTML =
+            `<tr><td colspan="6" class="empty">${escapeHTML(error.message)}</td></tr>`;
+        document.getElementById("tableSummary").textContent = "Database request failed.";
+        showMessage(error.message);
+    }
+}
+
+function resetForm() {
+    editingId = null;
+    form.reset();
+    document.getElementById("recorded_at").value = localDateTimeValue(new Date());
+    document.getElementById("formTitle").textContent = "Create health record";
+    document.getElementById("saveBtn").textContent = "Save record";
+    document.getElementById("cancelEditBtn").hidden = true;
+}
+
+form.addEventListener("submit", async event => {
+    event.preventDefault();
+    clearMessage();
+
+    const payload = {
+        patient_id: Number(patientSelect.value),
+        record_type: document.getElementById("record_type").value,
+        title: document.getElementById("title").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        recorded_at: document.getElementById("recorded_at").value
+    };
+
+    if (!payload.patient_id || !payload.record_type || !payload.title || !payload.recorded_at) {
+        showMessage("Please complete all required fields.");
+        return;
+    }
+
+    const saveButton = document.getElementById("saveBtn");
+    saveButton.disabled = true;
+
+    try {
+        await requestJSON(
+            editingId ? `${API}/${editingId}` : API,
+            {
+                method: editingId ? "PUT" : "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        showMessage(
+            editingId ? "Health record updated successfully." : "Health record saved successfully.",
+            "success"
+        );
+
+        resetForm();
+        await loadRecords(document.getElementById("searchInput").value.trim());
+    } catch (error) {
+        showMessage(error.message);
+    } finally {
+        saveButton.disabled = false;
+    }
+});
+
+recordsBody.addEventListener("click", async event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const id = Number(button.dataset.id);
+    const record = records.find(item => Number(item.record_id) === id);
+    if (!record) return;
+
+    if (button.dataset.action === "edit") {
+        editingId = id;
+        patientSelect.value = String(record.patient_id);
+        document.getElementById("record_type").value = record.record_type || "";
+        document.getElementById("title").value = record.title || "";
+        document.getElementById("description").value = record.description || "";
+        document.getElementById("recorded_at").value = localDateTimeValue(record.recorded_at);
+
+        document.getElementById("formTitle").textContent = "Edit health record";
+        document.getElementById("saveBtn").textContent = "Update record";
+        document.getElementById("cancelEditBtn").hidden = false;
+        document.getElementById("recordFormCard").scrollIntoView({ behavior: "smooth" });
+        clearMessage();
+        return;
+    }
+
+    if (button.dataset.action === "delete") {
+        if (!window.confirm(`Delete the record "${record.title}"? This cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            await requestJSON(`${API}/${id}`, { method: "DELETE" });
+            showMessage("Health record deleted successfully.", "success");
+            if (editingId === id) resetForm();
+            await loadRecords(document.getElementById("searchInput").value.trim());
+        } catch (error) {
+            showMessage(error.message);
+        }
+    }
+});
+
+document.getElementById("cancelEditBtn").addEventListener("click", resetForm);
+document.getElementById("clearBtn").addEventListener("click", () => {
+    setTimeout(() => {
+        editingId = null;
+        document.getElementById("formTitle").textContent = "Create health record";
+        document.getElementById("saveBtn").textContent = "Save record";
+        document.getElementById("cancelEditBtn").hidden = true;
+    }, 0);
+});
+document.getElementById("newRecordBtn").addEventListener("click", () => {
+    resetForm();
+    document.getElementById("recordFormCard").scrollIntoView({ behavior: "smooth" });
+});
+document.getElementById("searchBtn").addEventListener("click", () =>
+    loadRecords(document.getElementById("searchInput").value.trim())
+);
+document.getElementById("refreshBtn").addEventListener("click", async () => {
+    clearMessage();
+    try {
+        await loadPatients();
+        await loadRecords(document.getElementById("searchInput").value.trim());
+    } catch (error) {
+        showMessage(error.message);
+    }
+});
+document.getElementById("searchInput").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        loadRecords(event.target.value.trim());
+    }
+});
+
+(async function initialize() {
+    document.getElementById("recorded_at").value = localDateTimeValue(new Date());
+
+    try {
+        await loadPatients();
+        await loadRecords();
+    } catch (error) {
+        showMessage(error.message);
+    }
+})();
+</script>
+</body>
+</html>

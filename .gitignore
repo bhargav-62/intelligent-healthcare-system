@@ -1,4 +1,21 @@
 
+# Local datasets and potentially sensitive source data
+data/raw
+data/raw_old
+data/processed
+data/processed_old
+
+# Dataset files stored elsewhere in the project
+Cleaned_Dataset.csv
+
+# Local exports and database backups
+exports/
+*.sql
+*.dump
+*.db
+*.sqlite
+*.sqlite3
+
 # Python cache files
 __pycache__/
 *.py[cod]
@@ -49,3 +66,19 @@ medicine_database.pkl
 
 # Current trained model: keep local until its sharing and size are reviewed
 models/
+# Database backups and local exports
+*.sql
+*.dump
+exports/
+
+# Local SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Private database backups
+backups/
+*.sql
+
+# Environment secrets
+.env

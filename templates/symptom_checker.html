@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare AI | Symptom Checker</title>
+    <style>
+        :root {
+            --primary: #465fff;
+            --purple: #7950e8;
+            --bg: #f4f6fc;
+            --card: #ffffff;
+            --text: #18243b;
+            --muted: #71809b;
+            --border: #e3e9f4;
+            --green: #079b79;
+            --warning: #fff7e5;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 18px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand {
+            color: var(--primary);
+            font-size: 21px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        nav { display: flex; gap: 20px; flex-wrap: wrap; }
+        nav a { color: var(--muted); text-decoration: none; font-size: 14px; }
+
+        main { max-width: 1150px; margin: 30px auto; padding: 0 20px; }
+
+        .hero {
+            background: linear-gradient(120deg, #465fff, #8356e8);
+            color: white;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: .9;
+        }
+
+        h1 { margin: 10px 0; font-size: clamp(25px, 4vw, 36px); }
+        .hero p { max-width: 760px; line-height: 1.7; margin-bottom: 0; }
+
+        .notice {
+            background: var(--warning);
+            border: 1px solid #f3d58d;
+            border-radius: 12px;
+            padding: 15px 18px;
+            font-size: 13px;
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .notice strong { display: block; margin-bottom: 4px; }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px #1a315008;
+        }
+
+        .panel-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        h2 { font-size: 20px; margin: 0 0 8px; }
+        .muted { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+        .pill {
+            background: #eef0ff;
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin: 22px 0;
+            flex-wrap: wrap;
+        }
+
+        input[type="search"] {
+            flex: 1;
+            min-width: 220px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 9px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-weight: 650;
+            font-size: 13px;
+        }
+
+        button:disabled { opacity: .55; cursor: not-allowed; }
+
+        .secondary { background: #eef1fa; color: var(--text); }
+        .primary { background: var(--primary); color: white; }
+
+        .symptoms {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .symptom {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            min-height: 46px;
+        }
+
+        .symptom:has(input:checked) {
+            background: #f0f3ff;
+            border-color: var(--primary);
+        }
+
+        .symptom input { accent-color: var(--primary); }
+        .symptom[hidden] { display: none; }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        #loading, #results { display: none; margin-top: 20px; }
+        #loading.show, #results.show { display: block; }
+
+        .result-card {
+            background: #fafbff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 17px;
+            margin-top: 12px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 12px 0;
+            font-size: 13px;
+        }
+
+        .bar {
+            height: 7px;
+            background: #e7ebf5;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 7px;
+        }
+
+        .bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+        }
+
+        .error { color: #b42318; }
+        .urgent { background: #fff0ef; border-color: #ffc9c4; }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            padding: 25px 15px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 750px) {
+            .symptoms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .panel { padding: 17px; }
+        }
+
+        @media (max-width: 480px) {
+            .symptoms { grid-template-columns: 1fr; }
+            header { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a class="brand" href="/">✚ MediCare AI</a>
+    <nav>
+        <a href="/">Dashboard</a>
+        <a href="/patients">Patients</a>
+        <a href="/appointments">Appointments</a>
+        <a href="/records">Health Records</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero">
+        <span class="eyebrow">Experimental machine-learning feature</span>
+        <h1>AI Symptom Checker</h1>
+        <p>
+            Explore how a machine-learning model matches selected symptom
+            patterns to its learned classes. This is an educational
+            demonstration, not a medical diagnosis.
+        </p>
+    </section>
+
+    <div class="notice">
+        <strong>Important health notice</strong>
+        Predictions and model scores are not validated medical probabilities.
+        Do not use this tool to diagnose conditions, choose medicines, or
+        delay care. For severe symptoms, seek urgent professional medical care.
+    </div>
+
+    <section class="panel">
+        <div class="panel-head">
+            <div>
+                <h2>Choose symptoms</h2>
+                <p class="muted">
+                    Select all applicable features from the existing model.
+                    You can search by symptom name.
+                </p>
+            </div>
+            <span class="pill">{{ symptoms|length }} model features</span>
+        </div>
+
+        {% if not model_loaded %}
+        <div class="notice">
+            <strong>Model unavailable</strong>
+            Check the Flask terminal and confirm the existing model file is present.
+        </div>
+        {% endif %}
+
+        <div class="toolbar">
+            <input id="symptomSearch" type="search"
+                   placeholder="Search symptoms, e.g. cough or headache"
+                   aria-label="Search symptoms">
+            <button type="button" class="secondary" id="clearBtn">Clear selection</button>
+        </div>
+
+        <div class="symptoms" id="symptomList">
+            {% for symptom in symptoms %}
+            <label class="symptom"
+                   data-search="{{ symptom.name|lower }} {{ symptom.label|lower }}">
+                <input type="checkbox" name="symptom"
+                       value="{{ symptom.name }}">
+                <span>{{ symptom.label }}</span>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div class="actions">
+            <span class="muted" id="selectedCount">0 symptoms selected</span>
+            <button type="button" class="primary" id="analyzeBtn"
+                    {% if not model_loaded %}disabled{% endif %}>
+                Analyze symptom pattern →
+            </button>
+        </div>
+
+        <div id="loading" class="muted" role="status">
+            Running the existing model…
+        </div>
+        <section id="results" aria-live="polite"></section>
+    </section>
+</main>
+
+<footer>
+    MediCare AI · Educational prototype only · Not a medical device.
+</footer>
+
+<script>
+(() => {
+    "use strict";
+
+    const checkboxes = [...document.querySelectorAll('input[name="symptom"]')];
+    const count = document.getElementById("selectedCount");
+    const search = document.getElementById("symptomSearch");
+    const clearBtn = document.getElementById("clearBtn");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const loading = document.getElementById("loading");
+    const results = document.getElementById("results");
+
+    function updateCount() {
+        const total = checkboxes.filter(item => item.checked).length;
+        count.textContent = `${total} symptom${total === 1 ? "" : "s"} selected`;
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, ch => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;",
+            '"': "&quot;", "'": "&#39;"
+        })[ch]);
+    }
+
+    checkboxes.forEach(item => item.addEventListener("change", updateCount));
+
+    search.addEventListener("input", () => {
+        const query = search.value.trim().toLowerCase();
+        document.querySelectorAll(".symptom").forEach(card => {
+            card.hidden = !card.dataset.search.includes(query);
+        });
+    });
+
+    clearBtn.addEventListener("click", () => {
+        checkboxes.forEach(item => item.checked = false);
+        updateCount();
+        results.className = "";
+        results.innerHTML = "";
+    });
+
+    analyzeBtn.addEventListener("click", async () => {
+        const selected = checkboxes.filter(item => item.checked).map(item => item.value);
+
+        results.className = "";
+        results.innerHTML = "";
+
+        if (selected.length === 0) {
+            results.className = "show";
+            results.innerHTML = '<div class="result-card error">Select at least one symptom first.</div>';
+            return;
+        }
+
+        analyzeBtn.disabled = true;
+        loading.classList.add("show");
+
+        try {
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({ symptoms: selected })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || `Request failed (${response.status})`);
+            }
+
+            let html = "";
+
+            if (data.urgent_notice) {
+                html += `
+                    <div class="result-card urgent">
+                        <strong>Urgent safety notice</strong>
+                        <p class="muted">
+                            One or more selected symptoms may require urgent attention.
+                            Seek professional medical care promptly; do not rely on this model.
+                        </p>
+                    </div>`;
+            }
+
+            html += `
+                <div class="result-card">
+                    <span class="pill">Educational model output</span>
+                    <h2 style="margin-top:15px">Pattern prediction</h2>
+                    <p><strong>${escapeHtml(data.educational_prediction)}</strong></p>
+                    <p class="muted">Model: ${escapeHtml(data.model_used || "Existing model")}</p>
+                    <p class="muted">Selected symptoms: ${selected.length}</p>
+                </div>`;
+
+            if (Array.isArray(data.model_scores) && data.model_scores.length) {
+                html += `<div class="result-card"><h2>Top model outputs</h2>
+                    <p class="muted">Scores reflect model output, not clinical likelihood.</p>`;
+
+                data.model_scores.forEach(item => {
+                    const score = Number(item.score);
+                    const hasScore = Number.isFinite(score);
+                    const width = hasScore ? Math.max(0, Math.min(100, score)) : 0;
+
+                    html += `
+                        <div class="result-row">
+                            <span>${escapeHtml(item.disease)}</span>
+                            <strong>${hasScore ? width.toFixed(2) + "%" : "Score unavailable"}</strong>
+                        </div>
+                        ${hasScore ? `<div class="bar"><span style="width:${width}%"></span></div>` : ""}`;
+                });
+
+                html += `</div>`;
+            }
+
+            html += `<div class="result-card muted">${escapeHtml(data.disclaimer || "Educational output only. Not a diagnosis.")}</div>`;
+
+            results.innerHTML = html;
+            results.className = "show";
+        } catch (error) {
+            results.innerHTML = `
+                <div class="result-card error">
+                    <strong>Could not analyze symptoms</strong>
+                    <p>${escapeHtml(error.message || "Check the Flask server and try again.")}</p>
+                </div>`;
+            results.className = "show";
+        } finally {
+            loading.classList.remove("show");
+            analyzeBtn.disabled = false;
+        }
+    });
+
+    updateCount();
+})();
+</script>
+</body>
+</html>

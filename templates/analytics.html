@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediCare AI | Analytics</title>
+<style>
+:root{--blue:#465fff;--purple:#7950e8;--bg:#f4f6fc;--white:#fff;--text:#18243b;--muted:#71809b;--border:#e3e9f4;--green:#079b79}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
+.layout{display:flex;min-height:100vh}
+aside{width:190px;flex-shrink:0;background:#fff;border-right:1px solid var(--border);padding:22px 12px}
+.brand{display:block;color:var(--blue);font-weight:800;font-size:20px;text-decoration:none;margin:0 8px 30px}
+.nav-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:18px 8px 12px}
+nav a{display:block;padding:11px 10px;margin:4px 0;border-radius:9px;text-decoration:none;color:#40506d;font-size:13px}
+nav a:hover,nav a.active{background:#eaf0ff;color:var(--blue)}
+main{flex:1;min-width:0;padding:22px 28px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--border);padding:0 0 18px;margin-bottom:25px}
+.crumb{color:var(--muted);font-size:13px}
+.profile{text-align:right;font-size:12px}.profile small{display:block;color:var(--muted);margin-top:4px}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:26px;margin:0 0 7px}.subtitle,.muted{color:var(--muted);font-size:13px;line-height:1.6}
+button{border:0;border-radius:9px;padding:11px 15px;cursor:pointer;font-weight:650;font-size:13px}
+.primary{background:var(--blue);color:#fff}.secondary{background:#eef1fa;color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;min-width:0;box-shadow:0 4px 15px #20345a05}
+.kicker{font-size:12px;color:var(--muted)}.value{font-size:30px;font-weight:800;margin:10px 0 5px}.live{font-size:11px;color:var(--green)}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+h2{font-size:17px;margin:0 0 7px}
+.chart-row{display:grid;grid-template-columns:110px 1fr 35px;align-items:center;gap:10px;margin:17px 0;font-size:12px}
+.track{height:10px;background:#edf0f8;border-radius:12px;overflow:hidden}
+.fill{height:100%;border-radius:12px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+.months{display:flex;align-items:flex-end;gap:9px;height:190px;padding:15px 0 0;border-bottom:1px solid var(--border)}
+.month{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
+.month-bar{width:65%;max-width:34px;min-height:3px;background:linear-gradient(180deg,#7c65f1,#465fff);border-radius:5px 5px 0 0}
+.empty{padding:15px;background:#f7f9fd;border-radius:9px;color:var(--muted);font-size:13px}
+.notice{background:#fff7e5;border:1px solid #f3d58d;border-radius:10px;padding:13px 15px;font-size:12px;line-height:1.6;margin-bottom:20px}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.layout{display:block}aside{width:100%;padding:12px}nav{display:flex;flex-wrap:wrap}nav a{padding:8px}main{padding:18px 14px}.columns{grid-template-columns:1fr}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.chart-row{grid-template-columns:90px 1fr 25px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+<a class="brand" href="/">✚ MediCare AI</a>
+<div class="nav-label">Workspace</div>
+<nav>
+<a href="/">▦ Dashboard</a>
+<a href="/patients">♙ Patients</a>
+<a href="/appointments">▣ Appointments</a>
+<a href="/records">▤ Health Records</a>
+<a href="/ai-insights">✧ AI Insights</a>
+<a href="/reports">▧ Reports</a>
+<a class="active" href="/analytics">▥ Analytics</a>
+</nav>
+</aside>
+<main>
+<header class="topbar">
+<div class="crumb">MediCare AI / Analytics</div>
+<div class="profile">Local project<small>Live database analytics</small></div>
+</header>
+<section class="heading">
+<div><h1>Analytics</h1><div class="subtitle">Explore patient registrations, appointments and health records stored in MySQL.</div></div>
+<button class="primary" id="refresh">↻ Refresh data</button>
+</section>
+<div class="notice"><strong>Database-backed figures</strong>These summaries come from your current local MySQL database. They are operational counts, not clinical insights or medical risk assessments.</div>
+<div class="grid">
+<div class="card"><div class="kicker">Registered patients</div><div class="value" id="patients">—</div><div class="live">Live MySQL count</div></div>
+<div class="card"><div class="kicker">Total appointments</div><div class="value" id="appointments">—</div><div class="live">Live MySQL count</div></div>
+<div class="card"><div class="kicker">Health records</div><div class="value" id="records">—</div><div class="live">Live MySQL count</div></div>
+<div class="card"><div class="kicker">Scheduled appointments from today</div><div class="value" id="upcoming">—</div><div class="live">Status and date based</div></div>
+</div>
+<div class="columns">
+<section class="card">
+<h2>Appointment status</h2><p class="muted">Current records grouped by status.</p>
+<div id="statusChart" class="empty">Loading appointment data…</div>
+</section>
+<section class="card">
+<h2>Health record types</h2><p class="muted">Records grouped by their saved type.</p>
+<div id="recordChart" class="empty">Loading record data…</div>
+</section>
+<section class="card">
+<h2>Patient registrations by month</h2><p class="muted">Monthly registrations for the available 12-month window.</p>
+<div id="monthlyChart" class="empty">Loading registration data…</div>
+</section>
+<section class="card">
+<h2>Data notes</h2>
+<p class="muted">Analytics only reflects records actually saved in MySQL. A zero count means no matching rows were found.</p>
+<p class="muted" id="updated">Waiting for database response…</p>
+<p><a href="/reports">Open Reports →</a></p>
+</section>
+</div>
+</main>
+</div>
+<script>
+const numberFormat = new Intl.NumberFormat();
+function showBars(targetId, rows, labelKey) {
+  const el = document.getElementById(targetId);
+  if (!rows || rows.length === 0) {
+    el.className = "empty";
+    el.textContent = "No records available yet.";
+    return;
+  }
+  el.className = "";
+  const max = Math.max(...rows.map(row => Number(row.total) || 0), 1);
+  el.innerHTML = rows.map(row => {
+    const label = String(row[labelKey] ?? "Unspecified");
+    const total = Number(row.total) || 0;
+    const width = Math.max(0, Math.min(100, total / max * 100));
+    return `<div class="chart-row"><span>${label.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}</span><div class="track"><div class="fill" style="width:${width}%"></div></div><strong>${numberFormat.format(total)}</strong></div>`;
+  }).join("");
+}
+async function loadAnalytics() {
+  const refresh = document.getElementById("refresh");
+  refresh.disabled = true;
+  document.getElementById("updated").textContent = "Loading from MySQL…";
+  try {
+    const response = await fetch("/api/analytics/summary", {headers:{"Accept":"application/json"},cache:"no-store"});
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.message || "Analytics request failed.");
+    document.getElementById("patients").textContent = numberFormat.format(data.total_patients);
+    document.getElementById("appointments").textContent = numberFormat.format(data.total_appointments);
+    document.getElementById("records").textContent = numberFormat.format(data.total_health_records);
+    document.getElementById("upcoming").textContent = numberFormat.format(data.upcoming_appointments);
+    showBars("statusChart",data.appointment_status,"status");
+    showBars("recordChart",data.record_types,"record_type");
+
+    const monthly = document.getElementById("monthlyChart");
+    const rows = data.monthly_patients || [];
+    if (!rows.length) {
+      monthly.className = "empty";
+      monthly.textContent = "No patient registrations in this time window.";
+    } else {
+      monthly.className = "months";
+      const max = Math.max(...rows.map(r=>Number(r.total)||0),1);
+      monthly.innerHTML = rows.map(r => {
+        const height = Math.max(3, (Number(r.total)||0)/max*100);
+        const label = String(r.month || "").slice(5);
+        return `<div class="month" title="${r.month}: ${r.total} patients"><div>${numberFormat.format(r.total)}</div><div class="month-bar" style="height:${height}%"></div><span>${label}</span></div>`;
+      }).join("");
+    }
+    document.getElementById("updated").textContent = "Last refreshed: " + new Date().toLocaleString();
+  } catch (error) {
+    document.getElementById("updated").textContent = "Could not load analytics: " + error.message;
+    ["patients","appointments","records","upcoming"].forEach(id=>document.getElementById(id).textContent="Unavailable");
+    ["statusChart","recordChart","monthlyChart"].forEach(id=>{
+      const el=document.getElementById(id);el.className="empty";el.textContent="Could not load data. Check the Flask terminal.";
+    });
+  } finally { refresh.disabled = false; }
+}
+document.getElementById("refresh").addEventListener("click",loadAnalytics);
+loadAnalytics();
+</script>
+</body>
+</html>

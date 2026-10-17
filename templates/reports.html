@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediCare AI | Reports</title>
+<style>
+:root{--blue:#465fff;--bg:#f4f6fc;--white:#fff;--text:#18243b;--muted:#71809b;--border:#e3e9f4;--green:#079b79}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
+.layout{display:flex;min-height:100vh}
+aside{width:190px;flex-shrink:0;background:white;border-right:1px solid var(--border);padding:22px 12px}
+.brand{display:block;color:var(--blue);font-weight:800;font-size:20px;text-decoration:none;margin:0 8px 30px}
+.nav-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:18px 8px 12px}
+nav a{display:block;padding:11px 10px;margin:4px 0;border-radius:9px;text-decoration:none;color:#40506d;font-size:13px}
+nav a:hover,nav a.active{background:#eaf0ff;color:var(--blue)}
+main{flex:1;min-width:0;padding:22px 28px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;border-bottom:1px solid var(--border);padding:0 0 18px;margin-bottom:25px}
+.crumb{color:var(--muted);font-size:13px}
+.profile{text-align:right;font-size:12px}.profile small{display:block;color:var(--muted);margin-top:4px}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:26px;margin:0 0 7px}.subtitle,.muted{color:var(--muted);font-size:13px;line-height:1.6}
+button,select,input{font:inherit}
+button{border:0;border-radius:9px;padding:11px 15px;cursor:pointer;font-weight:650;font-size:13px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:var(--blue);color:white}.secondary{background:#eef1fa;color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;min-width:0;box-shadow:0 4px 15px #20345a05}
+.kicker{font-size:12px;color:var(--muted)}.value{font-size:28px;font-weight:800;margin:10px 0 5px}
+.notice{background:#fff7e5;border:1px solid #f3d58d;border-radius:10px;padding:13px 15px;font-size:12px;line-height:1.6;margin-bottom:20px}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0}
+select,input{border:1px solid var(--border);background:white;border-radius:9px;padding:11px 12px;color:var(--text)}
+select{min-width:220px}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:10px}
+table{width:100%;border-collapse:collapse;background:white;font-size:12px;white-space:nowrap}
+th,td{text-align:left;padding:12px;border-bottom:1px solid var(--border);max-width:300px}
+th{background:#f7f8fc;color:#52617e;text-transform:uppercase;font-size:10px;letter-spacing:.4px}
+td{overflow-wrap:anywhere;white-space:normal}
+tr:last-child td{border-bottom:0}
+.status{padding:4px 8px;background:#edf8f4;color:var(--green);border-radius:20px;font-size:11px}
+.message{padding:14px;background:#f7f9fd;color:var(--muted);border-radius:9px;font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:24px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+@media(max-width:760px){.layout{display:block}aside{width:100%;padding:12px}nav{display:flex;flex-wrap:wrap}nav a{padding:8px}main{padding:18px 14px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+<a class="brand" href="/">✚ MediCare AI</a>
+<div class="nav-label">Workspace</div>
+<nav>
+<a href="/">▦ Dashboard</a>
+<a href="/patients">♙ Patients</a>
+<a href="/appointments">▣ Appointments</a>
+<a href="/records">▤ Health Records</a>
+<a href="/ai-insights">✧ AI Insights</a>
+<a class="active" href="/reports">▧ Reports</a>
+<a href="/analytics">▥ Analytics</a>
+</nav>
+</aside>
+<main>
+<header class="topbar">
+<div class="crumb">MediCare AI / Reports</div>
+<div class="profile">Local project<small>Database report center</small></div>
+</header>
+<section class="heading">
+<div><h1>Reports</h1><div class="subtitle">Preview and export saved MySQL records.</div></div>
+<button class="secondary" id="refresh">↻ Refresh report</button>
+</section>
+<div class="notice"><strong>Data privacy</strong>Reports may contain personal information. Use fictional test data during development, store exports securely, and don't share them publicly.</div>
+<div class="grid">
+<div class="card"><div class="kicker">Report records</div><div class="value" id="rowCount">—</div><div class="muted">Rows in selected report</div></div>
+<div class="card"><div class="kicker">Report type</div><div class="value" id="reportName" style="font-size:20px">Patients</div><div class="muted">Current selection</div></div>
+<div class="card"><div class="kicker">Data source</div><div class="value" style="font-size:20px">MySQL</div><div class="muted">Live database query</div></div>
+</div>
+<section class="card">
+<h2 style="margin:0 0 6px">Report preview</h2>
+<p class="muted">Choose a report, search the loaded rows, then export the displayed report as CSV.</p>
+<div class="controls">
+<select id="reportType" aria-label="Select report">
+<option value="patients">Patients</option>
+<option value="appointments">Appointments</option>
+<option value="health_records">Health Records</option>
+</select>
+<input id="search" type="search" placeholder="Search within report..." aria-label="Search report">
+<button class="primary" id="export">Download CSV</button>
+</div>
+<div id="message" class="message">Loading report data from MySQL…</div>
+<div class="table-wrap" id="tableWrap" hidden>
+<table>
+<thead id="tableHead"></thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+<p class="muted" id="footerNote"></p>
+</section>
+<footer>MediCare AI · Local educational prototype · Keep exported data secure.</footer>
+</main>
+</div>
+<script>
+const typeSelect=document.getElementById("reportType");
+const searchInput=document.getElementById("search");
+const message=document.getElementById("message");
+const tableWrap=document.getElementById("tableWrap");
+const tableHead=document.getElementById("tableHead");
+const tableBody=document.getElementById("tableBody");
+const rowCount=document.getElementById("rowCount");
+const reportName=document.getElementById("reportName");
+const footerNote=document.getElementById("footerNote");
+let allRows=[];
+let visibleRows=[];
+let currentColumns=[];
+
+const labels={
+patient_id:"Patient ID",patient_code:"Patient Code",first_name:"First Name",
+last_name:"Last Name",date_of_birth:"Date of Birth",gender:"Gender",
+phone:"Phone",email:"Email",created_at:"Created At",
+appointment_id:"Appointment ID",appointment_date:"Appointment Date",
+appointment_time:"Appointment Time",reason:"Reason",
+clinician_name:"Clinician",status:"Status",record_id:"Record ID",
+record_type:"Record Type",title:"Title",description:"Description",
+recorded_at:"Recorded At"
+};
+
+function escapeHtml(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function renderTable(){
+ const query=searchInput.value.trim().toLowerCase();
+ visibleRows=allRows.filter(row=>Object.values(row).some(value=>
+   String(value??"").toLowerCase().includes(query)
+ ));
+ rowCount.textContent=new Intl.NumberFormat().format(visibleRows.length);
+ tableHead.innerHTML="<tr>"+currentColumns.map(col=>
+   `<th>${escapeHtml(labels[col]||col)}</th>`
+ ).join("")+"</tr>";
+
+ if(!visibleRows.length){
+   tableBody.innerHTML=`<tr><td colspan="${Math.max(currentColumns.length,1)}">No matching records.</td></tr>`;
+ }else{
+   tableBody.innerHTML=visibleRows.map(row=>"<tr>"+currentColumns.map(col=>
+     `<td>${escapeHtml(row[col])}</td>`
+   ).join("")+"</tr>").join("");
+ }
+ footerNote.textContent=`Showing ${visibleRows.length} of ${allRows.length} rows.`;
+}
+
+async function loadReport(){
+ const type=typeSelect.value;
+ message.hidden=false;
+ message.textContent="Loading report data from MySQL…";
+ tableWrap.hidden=true;
+ document.getElementById("refresh").disabled=true;
+ document.getElementById("export").disabled=true;
+ reportName.textContent=type==="health_records"?"Health Records":
+   type.charAt(0).toUpperCase()+type.slice(1);
+ try{
+   const response=await fetch(`/api/reports/${encodeURIComponent(type)}`,{
+     headers:{"Accept":"application/json"},cache:"no-store"
+   });
+   const data=await response.json();
+   if(!response.ok||!data.success)throw new Error(data.message||"Report request failed.");
+   allRows=Array.isArray(data.rows)?data.rows:[];
+   currentColumns=allRows.length?Object.keys(allRows[0]):(
+     type==="patients"
+       ?["patient_id","patient_code","first_name","last_name","date_of_birth","gender","phone","email","created_at"]
+       :type==="appointments"
+       ?["appointment_id","patient_code","first_name","last_name","appointment_date","appointment_time","reason","clinician_name","status"]
+       :["record_id","patient_code","first_name","last_name","record_type","title","description","recorded_at","created_at"]
+   );
+   message.hidden=true;
+   tableWrap.hidden=false;
+   renderTable();
+   document.getElementById("export").disabled=allRows.length===0;
+ }catch(error){
+   allRows=[];visibleRows=[];currentColumns=[];
+   message.hidden=false;
+   message.textContent="Could not load report: "+error.message;
+   rowCount.textContent="Unavailable";
+   tableWrap.hidden=true;
+   footerNote.textContent="Check that Flask is running and the database API is available.";
+ }finally{
+   document.getElementById("refresh").disabled=false;
+ }
+}
+
+function downloadCsv(){
+ if(!visibleRows.length||!currentColumns.length)return;
+ const csvCell=value=>{
+   const text=String(value??"");
+   return '"'+text.replace(/"/g,'""')+'"';
+ };
+ const lines=[
+   currentColumns.map(col=>csvCell(labels[col]||col)).join(","),
+   ...visibleRows.map(row=>currentColumns.map(col=>csvCell(row[col])).join(","))
+ ];
+ const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+ link.href=url;
+ link.download=`medicare_${typeSelect.value}_${new Date().toISOString().slice(0,10)}.csv`;
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+ URL.revokeObjectURL(url);
+}
+
+typeSelect.addEventListener("change",()=>{searchInput.value="";loadReport();});
+searchInput.addEventListener("input",renderTable);
+document.getElementById("refresh").addEventListener("click",loadReport);
+document.getElementById("export").addEventListener("click",downloadCsv);
+loadReport();
+</script>
+</body>
+</html>

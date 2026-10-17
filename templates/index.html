@@ -1,338 +1,1096 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MediCare AI | Symptom Pattern Explorer</title>
+  <meta name="theme-color" content="#f5f7fc">
+  <title>MediCare AI | Healthcare Dashboard</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --blue: #2457d6;
-      --purple: #7057d9;
-      --ink: #182238;
-      --muted: #68738a;
-      --line: #e4e9f2;
-      --bg: #f4f7fc;
+      --bg: #f5f7fc;
+      --surface: #ffffff;
+      --ink: #17233b;
+      --muted: #758098;
+      --line: #e8ebf4;
+      --blue: #315fe9;
+      --purple: #7656e8;
+      --teal: #22b8a5;
+      --red: #ef6478;
+      --amber: #f2ad42;
+      --shadow: 0 8px 28px rgba(30,49,92,.055);
     }
 
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 24px;
     }
 
     body {
+      margin: 0;
+      background: var(--bg);
       font-family: Inter, Arial, sans-serif;
       color: var(--ink);
-      background: radial-gradient(circle at 10% 0%, #e6edff 0, transparent 34%), var(--bg);
-      min-height: 100vh;
+      font-size: 13px;
     }
 
-    header {
-      background: #ffffffed;
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--line);
+    button, input {
+      font: inherit;
+    }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 218px minmax(0, 1fr);
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      background: #fbfcff;
+      border-right: 1px solid var(--line);
+      padding: 22px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-height: 100vh;
       position: sticky;
       top: 0;
-      z-index: 10;
-    }
-
-    .nav {
-      max-width: 1180px;
-      margin: auto;
-      padding: 17px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
+      height: 100vh;
+      overflow: auto;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      padding: 0 10px;
+      font-size: 19px;
       font-weight: 800;
-      font-size: 21px;
-      color: var(--blue);
-      text-decoration: none;
+      letter-spacing: -.7px;
     }
 
-    .brand-icon {
+    .brand-mark {
+      width: 32px;
+      height: 32px;
       display: grid;
       place-items: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 13px;
-      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border-radius: 11px;
+      background: linear-gradient(135deg, #2d63ed, #9868ed);
       color: white;
-      font-size: 23px;
-    }
-
-    nav {
-      display: flex;
-      gap: 24px;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .hero {
-      max-width: 1180px;
-      margin: 38px auto 24px;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1.4fr 0.6fr;
-      gap: 26px;
-      align-items: stretch;
-    }
-
-    .hero-main {
-      padding: 38px;
-      border-radius: 26px;
-      color: white;
-      background: linear-gradient(125deg, #214fc5, #7658d9);
-      box-shadow: 0 18px 40px #354e9c25;
-    }
-
-    .eyebrow {
-      display: inline-block;
-      border: 1px solid #ffffff5c;
-      background: #ffffff18;
-      border-radius: 999px;
-      padding: 7px 12px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      font-size: clamp(30px, 4vw, 46px);
-      line-height: 1.12;
-      margin: 20px 0 14px;
-      letter-spacing: -0.04em;
-    }
-
-    .hero-main p {
-      line-height: 1.7;
-      color: #eef1ff;
-      max-width: 700px;
-    }
-
-    .hero-side {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      box-shadow: 0 10px 30px #1d31500b;
-    }
-
-    .hero-side .emoji {
-      font-size: 42px;
-      margin-bottom: 12px;
-    }
-
-    .hero-side h2 {
       font-size: 19px;
-      margin-bottom: 10px;
+      box-shadow: 0 5px 12px #5b72e82d;
     }
 
-    .hero-side p {
-      font-size: 14px;
-      line-height: 1.65;
-      color: var(--muted);
+    .brand span:last-child {
+      color: #202a43;
     }
 
-    main {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 0 24px 50px;
+    .brand em {
+      font-style: normal;
+      color: #5a67e9;
     }
 
-    .notice {
-      padding: 17px 19px;
-      border: 1px solid #edc45b;
-      background: #fff5d9;
-      border-radius: 15px;
-      color: #705316;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 22px;
-    }
-
-    .notice strong {
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .panel {
-      background: white;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow: 0 12px 35px #1d31500b;
-    }
-
-    .panel-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-
-    .panel h2 {
-      font-size: 23px;
-      letter-spacing: -0.03em;
-    }
-
-    .sub {
-      font-size: 14px;
-      color: var(--muted);
-      margin-top: 7px;
-      line-height: 1.55;
-    }
-
-    .count {
-      background: #edf2ff;
-      color: var(--blue);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 12px;
+    .nav-label {
+      font-size: 10px;
       font-weight: 800;
-      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #a2aabd;
+      padding: 0 13px;
+      margin-bottom: 7px;
     }
 
-    .toolbar {
+    .nav-list {
+      display: grid;
+      gap: 5px;
+    }
+
+    .nav-link {
       display: flex;
+      align-items: center;
       gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    input[type="search"] {
-      flex: 1;
-      min-width: 220px;
-      border: 1px solid var(--line);
+      padding: 11px 12px;
       border-radius: 12px;
-      padding: 13px 14px;
-      font: inherit;
-      outline: none;
+      color: #566078;
+      font-weight: 600;
+      transition: .18s;
     }
 
-    input[type="search"]:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px #2457d61a;
+    .nav-link:hover,
+    .nav-link.active {
+      background: #eaf0ff;
+      color: #2859dc;
     }
 
-    .small-btn,
-    .primary-btn,
-    .secondary-btn {
+    .nav-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 17px;
+    }
+
+    .nav-link .pill {
+      margin-left: auto;
+      background: #ff6678;
+      color: white;
+      border-radius: 20px;
+      padding: 3px 7px;
+      font-size: 10px;
+    }
+
+    .side-bottom {
+      margin-top: auto;
+      display: grid;
+      gap: 13px;
+    }
+
+    .assistant-card {
+      padding: 15px 13px;
+      border: 1px solid #e4e9fb;
+      border-radius: 17px;
+      background: linear-gradient(145deg, #f0f3ff, #fff);
+    }
+
+    .assistant-orb {
+      width: 39px;
+      height: 39px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #2e67ee, #8a5bec);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 22px;
+      margin: 12px 0;
+    }
+
+    .assistant-card h3 {
+      font-size: 12px;
+      margin: 0 0 6px;
+    }
+
+    .assistant-card p {
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+
+    .btn {
       border: 0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font: inherit;
+      border-radius: 10px;
+      padding: 10px 13px;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.2s;
+      transition: transform .18s, box-shadow .18s;
     }
 
-    .small-btn,
-    .secondary-btn {
-      background: #eef2f8;
-      color: var(--ink);
-    }
-
-    .primary-btn {
-      background: linear-gradient(120deg, var(--blue), var(--purple));
-      color: white;
-      box-shadow: 0 8px 18px #2457d629;
-    }
-
-    .small-btn:hover,
-    .secondary-btn:hover,
-    .primary-btn:hover {
+    .btn:hover {
       transform: translateY(-1px);
     }
 
-    .primary-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: none;
+    .btn-primary {
+      background: linear-gradient(110deg, var(--blue), var(--purple));
+      color: white;
+      box-shadow: 0 6px 14px #4966e52b;
+    }
+
+    .btn-soft {
+      background: #f0f3fa;
+      color: #44516d;
+    }
+
+    .assistant-card .btn {
+      width: 100%;
+      font-size: 11px;
+    }
+
+    /* TOP BAR */
+
+    .main {
+      min-width: 0;
+      padding: 0 24px 28px;
+    }
+
+    .topbar {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 23px;
+    }
+
+    .search {
+      width: min(430px, 48%);
+      position: relative;
+    }
+
+    .search span {
+      position: absolute;
+      left: 14px;
+      top: 10px;
+      font-size: 17px;
+      color: #929bb0;
+    }
+
+    .search input {
+      width: 100%;
+      border: 1px solid #e7eaf3;
+      background: white;
+      border-radius: 13px;
+      padding: 12px 14px 12px 42px;
+      outline: none;
+    }
+
+    .search input:focus {
+      border-color: #9caff9;
+      box-shadow: 0 0 0 3px #315fe914;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+    }
+
+    .icon-button {
+      width: 35px;
+      height: 35px;
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 11px;
+      cursor: pointer;
+      position: relative;
+      font-size: 16px;
+    }
+
+    .notification-dot {
+      position: absolute;
+      right: -3px;
+      top: -4px;
+      background: #f04d66;
+      color: white;
+      border-radius: 50%;
+      width: 17px;
+      height: 17px;
+      font-size: 10px;
+      display: grid;
+      place-items: center;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 3px;
+    }
+
+    .avatar {
+      width: 39px;
+      height: 39px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #e3e9ff, #f3dfff);
+      font-size: 20px;
+      border: 2px solid white;
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    .profile strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .profile small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 3px;
+    }
+
+    .welcome {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin: 4px 0 22px;
+    }
+
+    .welcome h1 {
+      font-size: 25px;
+      letter-spacing: -1px;
+      margin: 0 0 7px;
+    }
+
+    .welcome p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .date-chip {
+      padding: 10px 13px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      color: #626d84;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* DASHBOARD GRID AND CARDS */
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 285px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .main-column,
+    .right-column {
+      display: grid;
+      gap: 17px;
+      min-width: 0;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .stat-card {
+      padding: 16px 17px;
+      overflow: hidden;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .stat-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      background: #edf2ff;
+      color: #3e66e6;
+    }
+
+    .stat-icon.purple {
+      background: #f2edff;
+      color: #865de7;
+    }
+
+    .stat-icon.red {
+      background: #fff0f2;
+      color: #ed6175;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #59657c;
+    }
+
+    .stat-number {
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin: 12px 0 6px;
+    }
+
+    .stat-foot {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .trend {
+      color: #139b79;
+      font-weight: 800;
+      margin-left: 5px;
+    }
+
+    .trend.down {
+      color: #e4576b;
+    }
+
+    .spark {
+      width: 100%;
+      height: 33px;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 17px 18px 0;
+    }
+
+    .section-head h2 {
+      font-size: 14px;
+      letter-spacing: -.2px;
+      margin: 0;
+    }
+
+    .section-head p {
+      margin: 5px 0 0;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .text-link {
+      border: 0;
+      background: none;
+      color: #315fe9;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .text-link:hover {
+      text-decoration: underline;
+    }
+
+    .vitals {
+      padding: 14px 16px 16px;
+    }
+
+    .vital-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .vital {
+      padding: 12px 10px;
+      border: 1px solid #edf0f7;
+      border-radius: 13px;
+      min-width: 0;
+    }
+
+    .vital-top {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #69748a;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .vital-symbol {
+      font-size: 15px;
+      color: #e45d79;
+    }
+
+    .vital strong {
+      display: block;
+      font-size: 19px;
+      margin: 9px 0 5px;
+      letter-spacing: -.5px;
+    }
+
+    .vital small {
+      color: #159775;
+      font-size: 10px;
+    }
+
+    .vital .unit {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* CHART */
+
+    .chart-wrap {
+      padding: 12px 17px 15px;
+    }
+
+    .chart-legend {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 142px;
+      display: block;
+    }
+
+    .chart text {
+      font-family: Inter, Arial, sans-serif;
+      fill: #8993a8;
+      font-size: 10px;
+    }
+
+    .chart .gridline {
+      stroke: #edf0f7;
+      stroke-width: 1;
+    }
+
+    .chart .line {
+      fill: none;
+      stroke: #3869ed;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chart .area {
+      fill: url(#areaFill);
+    }
+
+    .chart .dot {
+      fill: #3869ed;
+      stroke: white;
+      stroke-width: 2;
+    }
+
+    .lower-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .list-card {
+      padding-bottom: 6px;
+    }
+
+    .list-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0f2f7;
+    }
+
+    .list-row:last-child {
+      border-bottom: 0;
+    }
+
+    .row-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: #eff4ff;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .row-main {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .row-main strong {
+      display: block;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row-main small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 4px;
+    }
+
+    .status {
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 5px 7px;
+      white-space: nowrap;
+      background: #e7f8f0;
+      color: #16805e;
+    }
+
+    .status.warn {
+      background: #fff4e4;
+      color: #b87517;
+    }
+
+    .status.demo {
+      background: #eef2ff;
+      color: #5368c9;
+    }
+
+    /* DONUT CHART */
+
+    .conditions {
+      padding: 15px 16px 17px;
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 13px;
+      align-items: center;
+    }
+
+    .donut {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #3166ec 0 34%,
+        #25bcae 34% 60%,
+        #8b5bea 60% 78%,
+        #f1a93d 78% 90%,
+        #d6dbea 90% 100%
+      );
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .donut:before {
+      content: "";
+      position: absolute;
+      inset: 19px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .donut-center {
+      position: relative;
+      text-align: center;
+    }
+
+    .donut-center strong {
+      display: block;
+      font-size: 20px;
+    }
+
+    .donut-center small {
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .legend-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 10px;
+      color: #657087;
+    }
+
+    .legend-row strong {
+      margin-left: auto;
+      color: #34415b;
+    }
+
+    .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* RIGHT COLUMN */
+
+    .right-column .card {
+      overflow: hidden;
+    }
+
+    .appointments-list .list-row {
+      padding: 13px 15px;
+    }
+
+    .person-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #f0edff;
+      font-size: 19px;
+      flex-shrink: 0;
+    }
+
+    .appointment-time {
+      font-size: 10px;
+      color: #657087;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .appointment-time small {
+      display: block;
+      margin-top: 5px;
+      background: #edf2ff;
+      color: #315fe9;
+      padding: 4px 6px;
+      border-radius: 6px;
+    }
+
+    .insight-card {
+      padding: 17px;
+      background: linear-gradient(125deg, #405de8, #8558e9);
+      color: white;
+      position: relative;
+      min-height: 156px;
+      overflow: hidden;
+    }
+
+    .insight-card:after {
+      content: "✦";
+      position: absolute;
+      right: 18px;
+      top: 13px;
+      font-size: 58px;
+      color: #ffffff73;
+      text-shadow: 0 0 25px #fff;
+    }
+
+    .insight-card .new-tag {
+      display: inline-block;
+      background: #ffffff24;
+      border: 1px solid #ffffff40;
+      padding: 4px 7px;
+      border-radius: 7px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .insight-card h2 {
+      font-size: 16px;
+      margin: 12px 0 7px;
+    }
+
+    .insight-card p {
+      font-size: 10px;
+      line-height: 1.6;
+      color: #eef0ff;
+      max-width: 195px;
+      margin: 0 0 14px;
+    }
+
+    .insight-card .btn {
+      background: white;
+      color: #405cde;
+      font-size: 10px;
+      padding: 9px 11px;
+    }
+
+    /* DEMO RISK CARD */
+
+    .risk-list {
+      padding: 13px 16px 15px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .risk-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .risk-title {
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .risk-value {
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .risk-bar {
+      height: 5px;
+      background: #eef1f7;
+      border-radius: 8px;
+      overflow: hidden;
+      grid-column: 1 / -1;
+    }
+
+    .risk-fill {
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #2dc9a0, #4ed0b4);
+    }
+
+    .risk-fill.mid {
+      background: linear-gradient(90deg, #ffc05a, #f3a83d);
+    }
+
+    .risk-caption {
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .activity .list-row {
+      padding: 12px 15px;
+    }
+
+    .activity .row-main strong {
+      font-weight: 600;
+    }
+
+    .activity .row-main small {
+      font-size: 9px;
+    }
+
+    .activity .row-icon {
+      border-radius: 50%;
+      background: #eff8f4;
+    }
+
+    .activity .row-icon.blue {
+      background: #eff3ff;
+    }
+
+    .activity .row-icon.red {
+      background: #fff0f2;
+    }
+
+    /* QUICK ACTIONS */
+
+    .quick-card {
+      padding: 0 15px 15px;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 14px;
+    }
+
+    .quick-action {
+      border: 1px solid #edf0f6;
+      background: white;
+      border-radius: 13px;
+      padding: 13px 10px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      min-width: 0;
+      transition: .18s;
+    }
+
+    .quick-action:hover {
+      border-color: #b8c7ff;
+      box-shadow: 0 6px 15px #315fe90c;
+      transform: translateY(-2px);
+    }
+
+    .quick-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #edf2ff;
+      color: #315fe9;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .quick-action strong {
+      display: block;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .quick-action small {
+      display: block;
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    /* MEDICAL DISCLAIMER */
+
+    .demo-note {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      border: 1px solid #f0d99c;
+      background: #fff9e9;
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #795c1b;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .demo-note strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* SYMPTOM EXPLORER */
+
+    .explorer {
+      scroll-margin-top: 20px;
+    }
+
+    .explorer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 20px 20px 14px;
+    }
+
+    .explorer-head h2 {
+      font-size: 17px;
+      margin: 0 0 6px;
+    }
+
+    .explorer-head p {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .feature-count {
+      padding: 7px 10px;
+      background: #edf2ff;
+      color: #315fe9;
+      border-radius: 9px;
+      font-weight: 800;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .explorer-tools {
+      display: flex;
+      gap: 10px;
+      padding: 0 20px 13px;
+    }
+
+    .explorer-tools input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    .explorer-tools input:focus {
+      border-color: #9caff9;
     }
 
     .symptoms {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      max-height: 510px;
+      gap: 8px;
+      padding: 0 20px;
+      max-height: 350px;
       overflow: auto;
-      padding: 2px 3px 2px 0;
     }
 
     .symptom {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      padding: 12px;
+      gap: 8px;
+      padding: 10px;
       border: 1px solid var(--line);
-      border-radius: 12px;
-      background: white;
+      border-radius: 10px;
       cursor: pointer;
-      min-height: 54px;
-      transition: 0.15s;
+      min-height: 42px;
+      background: #fff;
     }
 
     .symptom:hover {
-      border-color: #aabaf5;
-      background: #f8faff;
+      background: #f7f9ff;
+      border-color: #b9c8ff;
     }
 
     .symptom:has(input:checked) {
-      border-color: var(--blue);
-      background: #eef3ff;
+      background: #edf2ff;
+      border-color: #7c9af5;
     }
 
     .symptom input {
+      margin-top: 2px;
       accent-color: var(--blue);
-      margin-top: 3px;
     }
 
     .symptom span {
-      font-size: 13px;
+      font-size: 10px;
       line-height: 1.4;
       overflow-wrap: anywhere;
     }
 
-    .form-actions {
+    .symptom[hidden] {
+      display: none !important;
+    }
+
+    .explorer-actions {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 22px;
+      gap: 12px;
+      padding: 15px 20px 20px;
     }
 
     .selected-count {
-      font-size: 13px;
       color: var(--muted);
+      font-size: 10px;
     }
 
     .loading {
       display: none;
-      margin-top: 20px;
       color: var(--muted);
-      font-size: 14px;
+      padding: 0 20px 15px;
     }
 
     .loading.show {
@@ -341,7 +1099,7 @@
 
     .results {
       display: none;
-      margin-top: 24px;
+      padding: 0 20px 20px;
     }
 
     .results.show {
@@ -349,54 +1107,54 @@
     }
 
     .result-top {
-      border-radius: 18px;
       background: #eef3ff;
-      padding: 23px;
       border: 1px solid #d8e2ff;
+      border-radius: 13px;
+      padding: 17px;
     }
 
     .result-top .tag {
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
+      letter-spacing: .5px;
       color: var(--blue);
     }
 
     .result-top h3 {
-      font-size: 27px;
-      margin: 9px 0;
+      font-size: 21px;
+      margin: 8px 0;
     }
 
     .result-top p {
-      font-size: 13px;
+      font-size: 11px;
       color: var(--muted);
       line-height: 1.6;
     }
 
     .score-list {
       display: grid;
-      gap: 10px;
-      margin-top: 18px;
+      gap: 8px;
+      margin-top: 12px;
     }
 
     .score-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
+      display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       border: 1px solid var(--line);
-      padding: 14px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 10px;
     }
 
     .score-name {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: 700;
+      font-size: 11px;
     }
 
     .score-note {
-      font-size: 12px;
+      font-size: 9px;
       color: var(--muted);
       margin-top: 4px;
     }
@@ -404,21 +1162,21 @@
     .score-value {
       font-weight: 800;
       color: var(--blue);
-      font-size: 14px;
+      font-size: 11px;
     }
 
     .result-warning {
-      margin-top: 16px;
-      padding: 15px;
-      border-radius: 12px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
       background: #fff4e5;
       border: 1px solid #ffd39a;
       color: #814a0a;
-      font-size: 13px;
+      font-size: 10px;
       line-height: 1.6;
     }
 
-    .urgent {
+    .result-warning.urgent {
       background: #fff0f0;
       border-color: #ffbcbc;
       color: #8b1c1c;
@@ -426,196 +1184,649 @@
 
     footer {
       text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      padding: 0 24px 30px;
-      line-height: 1.6;
+      color: #929bb0;
+      font-size: 10px;
+      padding: 24px 0 4px;
+      line-height: 1.7;
     }
 
-    @media (max-width: 850px) {
-      .hero {
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      max-width: 340px;
+      background: #17233b;
+      color: white;
+      border-radius: 12px;
+      padding: 13px 16px;
+      box-shadow: 0 12px 35px #17233b30;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: .22s;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVE LAYOUTS */
+
+    @media (min-width: 1500px) {
+      .main {
+        padding-left: 30px;
+        padding-right: 30px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr) 310px;
+      }
+
+      .stats {
+        gap: 16px;
+      }
+
+      .stat-card {
+        padding: 19px;
+      }
+
+      .main-column,
+      .right-column {
+        gap: 19px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 190px minmax(0, 1fr);
+      }
+
+      .main {
+        padding: 0 17px 24px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr) 255px;
+        gap: 13px;
+      }
+
+      .stats {
+        gap: 9px;
+      }
+
+      .stat-card {
+        padding: 13px;
+      }
+
+      .stat-number {
+        font-size: 23px;
+      }
+
+      .vital-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .conditions {
+        grid-template-columns: 100px minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      .donut {
+        width: 98px;
+        height: 98px;
+      }
+
+      .donut:before {
+        inset: 16px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 72px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        padding: 20px 9px;
+      }
+
+      .brand {
+        justify-content: center;
+        padding: 0;
+      }
+
+      .brand > span:last-child,
+      .nav-label,
+      .nav-link .nav-text,
+      .nav-link .pill,
+      .assistant-card h3,
+      .assistant-card p,
+      .assistant-card .btn,
+      .assistant-orb {
+        display: none;
+      }
+
+      .nav-link {
+        justify-content: center;
+        padding: 12px 6px;
+      }
+
+      .nav-icon {
+        font-size: 19px;
+      }
+
+      .assistant-card {
+        display: flex;
+        justify-content: center;
+        padding: 12px 5px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .right-column {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+      }
+
+      .activity {
+        grid-column: 1 / -1;
+      }
+
+      .conditions {
+        grid-template-columns: 120px minmax(0, 1fr);
+      }
+
+      .donut {
+        width: 118px;
+        height: 118px;
+      }
+
+      .donut:before {
+        inset: 19px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .app {
+        display: block;
+      }
+
+      .sidebar {
+        position: fixed;
+        z-index: 40;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        min-height: 0;
+        padding: 7px 8px calc(7px + env(safe-area-inset-bottom));
+        border-right: 0;
+        border-top: 1px solid var(--line);
+        background: #ffffffef;
+        backdrop-filter: blur(15px);
+        display: block;
+      }
+
+      .sidebar .brand,
+      .sidebar .side-bottom,
+      .sidebar .nav-label {
+        display: none;
+      }
+
+      .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 3px;
+      }
+
+      .sidebar .nav-list {
+        display: contents;
+      }
+
+      .nav-link {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 7px 2px;
+        border-radius: 9px;
+        font-size: 9px;
+      }
+
+      .nav-link .nav-text {
+        display: block;
+        font-size: 9px;
+      }
+
+      .nav-icon {
+        font-size: 17px;
+      }
+
+      .main {
+        padding: 0 12px 88px;
+      }
+
+      .topbar {
+        height: 61px;
+        margin-bottom: 19px;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .search input {
+        font-size: 11px;
+        padding: 10px 10px 10px 36px;
+      }
+
+      .search span {
+        left: 11px;
+        top: 8px;
+      }
+
+      .top-actions {
+        gap: 7px;
+      }
+
+      .top-actions .icon-button:nth-child(2),
+      .profile .profile-copy {
+        display: none;
+      }
+
+      .profile {
+        padding: 0;
+      }
+
+      .avatar {
+        width: 33px;
+        height: 33px;
+      }
+
+      .welcome {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 16px;
+      }
+
+      .welcome h1 {
+        font-size: 22px;
+      }
+
+      .welcome .date-chip {
+        font-size: 10px;
+        padding: 8px 10px;
+      }
+
+      .dashboard-grid {
+        gap: 13px;
+      }
+
+      .main-column,
+      .right-column {
+        gap: 13px;
+      }
+
+      .stats {
         grid-template-columns: 1fr;
+        gap: 9px;
+      }
+
+      .stat-card {
+        padding: 13px 15px;
+      }
+
+      .stat-card .stat-top {
+        justify-content: flex-start;
+      }
+
+      .stat-card .stat-label {
+        flex: 1;
+      }
+
+      .stat-number {
+        font-size: 23px;
+        margin: 8px 0 3px;
+      }
+
+      .spark {
+        height: 26px;
+        margin-top: 5px;
+      }
+
+      .vital-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .lower-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .right-column {
+        grid-template-columns: 1fr;
+      }
+
+      .activity {
+        grid-column: auto;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quick-action {
+        padding: 10px 8px;
+      }
+
+      .quick-icon {
+        width: 29px;
+        height: 29px;
+      }
+
+      .section-head {
+        padding: 15px 14px 0;
+      }
+
+      .vitals {
+        padding: 12px;
+      }
+
+      .chart-wrap {
+        padding: 10px 12px;
+      }
+
+      .chart {
+        height: 125px;
+      }
+
+      .conditions {
+        grid-template-columns: 105px minmax(0, 1fr);
+        padding: 14px 12px;
+      }
+
+      .donut {
+        width: 100px;
+        height: 100px;
+      }
+
+      .donut:before {
+        inset: 16px;
+      }
+
+      .legend-list {
+        gap: 8px;
+      }
+
+      .legend-row {
+        font-size: 9px;
+      }
+
+      .explorer-head {
+        padding: 16px 14px 12px;
+      }
+
+      .explorer-tools {
+        padding: 0 14px 12px;
       }
 
       .symptoms {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 560px) {
-      nav {
-        gap: 12px;
+        padding: 0 14px;
+        gap: 6px;
       }
 
-      nav a {
-        font-size: 12px;
+      .symptom {
+        padding: 8px;
+        gap: 6px;
       }
 
-      .nav {
-        padding: 13px 16px;
+      .symptom span {
+        font-size: 9px;
       }
 
-      .hero,
-      main {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      .hero-main,
-      .hero-side,
-      .panel {
-        padding: 22px;
-      }
-
-      .symptoms {
-        grid-template-columns: 1fr;
-      }
-
-      .panel-head {
+      .explorer-actions {
+        padding: 13px 14px 16px;
+        align-items: flex-start;
         flex-direction: column;
       }
 
-      .form-actions {
-        align-items: stretch;
+      .explorer-actions .btn {
+        width: 100%;
       }
 
-      .primary-btn {
-        width: 100%;
+      .results {
+        padding: 0 14px 15px;
+      }
+
+      .toast {
+        left: 12px;
+        right: 12px;
+        bottom: 78px;
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
       }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <div class="nav">
-    <a class="brand" href="/">
-      <span class="brand-icon">✚</span>
-      <span>MediCare AI</span>
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="#dashboard" aria-label="MediCare AI dashboard">
+      <span class="brand-mark">M</span>
+      <span>Medi<em>Care AI</em></span>
     </a>
 
-    <nav>
-      <a href="#explorer">Symptom explorer</a>
-      <a href="/about">About</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </div>
-</header>
+    <div>
+      <div class="nav-label">Workspace</div>
 
-<section class="hero">
-  <div class="hero-main">
-    <span class="eyebrow">Educational ML prototype</span>
+      <nav class="nav-list" aria-label="Main navigation">
+        <a class="nav-link active" href="#dashboard">
+          <span class="nav-icon">▦</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
 
-    <h1>Explore symptom patterns with AI.</h1>
+        <a class="nav-link" href="/patients">
+            <span class="nav-icon">♙</span>
+            <span class="nav-text">Patients</span>
+        </a>
 
-    <p>
-      Select symptoms from the model's feature list to see the output
-      of an experimental machine-learning classifier. This tool is
-      for learning and demonstration, not for diagnosing or treating
-      health conditions.
-    </p>
-  </div>
+        <a class="nav-link" href="/appointments">
+            <span class="nav-icon">▣</span>
+            <span class="nav-text">Appointments</span>
+        </a>
 
-  <aside class="hero-side">
-    <div class="emoji">🩺</div>
-    <h2>Use health information carefully</h2>
+        <a class="nav-link" href="/records">
+            <span class="nav-icon">▤</span>
+            <span class="nav-text">Health Records</span>
+        </a>
 
-    <p>
-      The underlying dataset has limited distinct patterns and has
-      not been clinically validated. Model scores are not medical
-      probabilities or a measure of how ill someone is.
-    </p>
-  </aside>
-</section>
+        <a class="nav-link" href="/ai-insights">
+          <span class="nav-icon">✧</span>
+          <span class="nav-text">AI Insights</span>
+        </a>
 
-<main id="explorer">
+        </a>
 
-  {% if not model_loaded %}
-  <div class="notice">
-    <strong>⚠️ Model not loaded</strong>
-    The model file could not be loaded. Check the Flask terminal and
-    confirm <code>models/baseline_symptom_model.joblib</code> exists.
-  </div>
-  {% endif %}
+        </a>
 
-  <div class="notice">
-    <strong>Important medical disclaimer</strong>
-    Do not use this prototype to make medical decisions, select
-    medicines, or delay care. For severe or rapidly worsening
-    symptoms—including trouble breathing, chest pain, fainting, or
-    sudden weakness—seek urgent local medical care.
-  </div>
+        </a>
 
-  <section class="panel">
-    <div class="panel-head">
+        <a class="nav-link" href="/reports">
+          <span class="nav-icon">▧</span>
+          <span class="nav-text">Reports</span>
+        </a>
+
+        <a class="nav-link" href="/analytics">
+          <span class="nav-icon">▥</span>
+          <span class="nav-text">Analytics</span>
+        </a>
+
+        </a>
+
+        </a>
+
+        <a class="nav-link" href="/about">
+          <span class="nav-icon">⚙</span>
+          <span class="nav-text">About project</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="side-bottom"><div style="font-size:9px;color:#929bb0;text-align:center">MediCare AI · Student project</div></div>
+    </aside>
+
+  <main class="main" id="dashboard">
+    <header class="topbar">
+      <div class="topbar-title"><strong>MediCare AI</strong><small>Live healthcare dashboard</small></div>
+    </header>
+
+    <section class="welcome">
       <div>
-        <h2>Symptom pattern explorer</h2>
-        <p class="sub">
-          Choose all applicable symptoms. The model accepts
-          {{ symptoms|length }} binary symptom features.
-        </p>
+        <h1>Good morning, welcome back 👋</h1>
+        <p>Live overview of patients, appointments, health records, and the experimental AI symptom checker.</p>
+      </div>
+      <div class="date-chip">▣ &nbsp; {{ today }} &nbsp;⌄</div>
+    </section>
+
+    <div class="dashboard-grid">
+      <div class="main-column">
+        <section class="stats" aria-label="Live database statistics">
+          <article class="card stat-card">
+            <div class="stat-top"><span class="stat-icon">♙</span><span class="stat-label">Total Patients</span></div>
+            <div class="stat-number">—</div><div class="stat-foot">Loading live records…</div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-top"><span class="stat-icon purple">▣</span><span class="stat-label">Total Appointments</span></div>
+            <div class="stat-number">—</div><div class="stat-foot">Loading live records…</div>
+          </article>
+          <article class="card stat-card">
+            <div class="stat-top"><span class="stat-icon red">▤</span><span class="stat-label">Health Records</span></div>
+            <div class="stat-number">—</div><div class="stat-foot">Loading live records…</div>
+          </article>
+        </section>
+
+        <section class="card" id="records-summary">
+          <div class="section-head">
+            <div><h2>Health records</h2><p>Open the records page to view saved patient records from the database.</p></div>
+            <a class="text-link" href="/records">View records →</a>
+          </div>
+        </section>
+
+        <!-- Existing AI symptom prediction feature -->
+        <section class="card explorer" id="explorer">
+          <div class="explorer-head">
+            <div>
+              <h2>AI symptom checker</h2>
+              <p>Select symptom features to run your experimental machine-learning model. This is a learning demo, not a diagnostic tool.</p>
+            </div>
+            <span class="feature-count">{{ symptoms|length }} features</span>
+          </div>
+
+          {% if not model_loaded %}
+          <div class="result-warning" style="margin:0 20px 14px">
+            Model not loaded. Check the Flask terminal and confirm
+            <code>models/baseline_symptom_model.joblib</code> exists.
+          </div>
+          {% endif %}
+
+          <div class="explorer-tools">
+            <input
+              id="symptomSearch"
+              type="search"
+              placeholder="Search symptoms, e.g. cough or headache"
+              aria-label="Search symptoms"
+            >
+            <button class="btn btn-soft" id="selectNone" type="button">Clear</button>
+          </div>
+
+          <div class="symptoms" id="symptomList">
+            {% for symptom in symptoms %}
+            <label
+              class="symptom"
+              data-search="{{ symptom.name|lower }} {{ symptom.label|lower }}"
+            >
+              <input type="checkbox" name="symptom" value="{{ symptom.name }}">
+              <span>{{ symptom.label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+
+          <div class="explorer-actions">
+            <span class="selected-count" id="selectedCount">0 symptoms selected</span>
+            <button
+              class="btn btn-primary"
+              id="analyzeBtn"
+              type="button"
+              {% if not model_loaded %}disabled{% endif %}
+            >
+              Analyze symptom pattern →
+            </button>
+          </div>
+
+          <div class="loading" id="loading" role="status">
+            Running the experimental model…
+          </div>
+
+          <section class="results" id="results" aria-live="polite"></section>
+        </section>
       </div>
 
-      <span class="count">{{ symptoms|length }} features</span>
+      <aside class="right-column">
+        <section class="card" id="appointments">
+          <div class="section-head">
+            <div>
+              <h2>Upcoming appointments</h2>
+              <p>Live schedule from MySQL</p>
+            </div>
+            <a class="text-link" href="/appointments">View all</a>
+          </div>
+
+          <div class="appointments-list" id="dashboardAppointments" aria-live="polite">
+            <div class="list-row">
+              <div class="row-main">
+                <strong>Loading appointments...</strong>
+                <small>Please wait</small>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card insight-card" id="ai-insights">
+          <span class="new-tag">EXPERIMENTAL</span>
+          <h2>AI Health Insights</h2>
+          <p>Use the experimental symptom checker for educational exploration.</p>
+          <button class="btn" type="button" data-scroll="#explorer">Open symptom checker →</button>
+        </section>
+
+      </aside>
     </div>
 
-    <div class="toolbar">
-      <input
-        id="symptomSearch"
-        type="search"
-        placeholder="Search symptoms, e.g. cough or headache"
-        aria-label="Search symptoms"
-      >
+    <footer>
+      MediCare AI · Student educational prototype · AI symptom predictions are experimental and are not a medical diagnosis.
+    </footer>
+  </main>
+</div>
 
-      <button type="button" class="small-btn" id="selectNone">
-        Clear selection
-      </button>
-    </div>
-
-    <div class="symptoms" id="symptomList">
-      {% for symptom in symptoms %}
-      <label
-        class="symptom"
-        data-search="{{ symptom.name|lower }} {{ symptom.label|lower }}"
-      >
-        <input
-          type="checkbox"
-          name="symptom"
-          value="{{ symptom.name }}"
-        >
-
-        <span>{{ symptom.label }}</span>
-      </label>
-      {% endfor %}
-    </div>
-
-    <div class="form-actions">
-      <span class="selected-count" id="selectedCount">
-        0 symptoms selected
-      </span>
-
-      <button
-        class="primary-btn"
-        id="analyzeBtn"
-        type="button"
-        {% if not model_loaded %}disabled{% endif %}
-      >
-        Analyze symptom pattern →
-      </button>
-    </div>
-
-    <div class="loading" id="loading" role="status">
-      Running the experimental model…
-    </div>
-
-    <section class="results" id="results" aria-live="polite"></section>
-  </section>
-</main>
-
-<footer>
-  © 2026 MediCare AI · Educational prototype only · Not a medical
-  device or a substitute for professional healthcare.
-</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
   const API_URL = "/predict";
@@ -628,11 +1839,46 @@
   const results = document.getElementById("results");
   const loading = document.getElementById("loading");
   const analyzeBtn = document.getElementById("analyzeBtn");
+  const toast = document.getElementById("toast");
+
+  let toastTimer;
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer = setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2800);
+  }
+
+  document.querySelectorAll("[data-scroll]").forEach(button => {
+    button.addEventListener("click", () => {
+      const target = document.querySelector(button.dataset.scroll);
+
+      if (target) {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
+  });
+
+  document.querySelectorAll(".nav-link[href^='#']").forEach(link => {
+    link.addEventListener("click", () => {
+      document.querySelectorAll(".nav-link").forEach(item => {
+        item.classList.remove("active");
+      });
+
+      link.classList.add("active");
+    });
+  });
 
   function updateCount() {
-    const count = symptomInputs.filter(
-      input => input.checked
-    ).length;
+    const count = symptomInputs.filter(input => input.checked).length;
 
     selectedCount.textContent =
       `${count} symptom${count === 1 ? "" : "s"} selected`;
@@ -642,27 +1888,24 @@
     input.addEventListener("change", updateCount);
   });
 
-  document
-    .getElementById("symptomSearch")
-    .addEventListener("input", event => {
-      const query = event.target.value.trim().toLowerCase();
+  document.getElementById("symptomSearch").addEventListener("input", event => {
+    const query = event.target.value.trim().toLowerCase();
 
-      document.querySelectorAll(".symptom").forEach(card => {
-        card.hidden = !card.dataset.search.includes(query);
-      });
+    document.querySelectorAll(".symptom").forEach(card => {
+      card.hidden = !card.dataset.search.includes(query);
+    });
+  });
+
+  document.getElementById("selectNone").addEventListener("click", () => {
+    symptomInputs.forEach(input => {
+      input.checked = false;
     });
 
-  document
-    .getElementById("selectNone")
-    .addEventListener("click", () => {
-      symptomInputs.forEach(input => {
-        input.checked = false;
-      });
+    updateCount();
 
-      updateCount();
-      results.classList.remove("show");
-      results.innerHTML = "";
-    });
+    results.classList.remove("show");
+    results.innerHTML = "";
+  });
 
   function escapeHtml(value) {
     return String(value).replace(/[&<>"']/g, char => ({
@@ -676,22 +1919,17 @@
 
   function renderResults(data) {
     const predictions = data.model_scores || [];
-    const urgent = data.urgent_notice;
 
     results.innerHTML = `
       <div class="result-top">
-        <span class="tag">
-          Experimental model output · Not a diagnosis
-        </span>
+        <span class="tag">Experimental model output · Not a diagnosis</span>
 
-        <h3>
-          ${escapeHtml(data.educational_prediction || "No prediction")}
-        </h3>
+        <h3>${escapeHtml(data.educational_prediction || "No prediction")}</h3>
 
         <p>
-          The classifier matched the selected symptom pattern to
-          a label in its training dataset. This result does not
-          confirm that the condition is present.
+          The classifier matched this selected symptom pattern to a label
+          in its training dataset. This result does not confirm that the
+          condition is present.
         </p>
       </div>
 
@@ -720,7 +1958,7 @@
       </div>
 
       ${
-        urgent
+        data.urgent_notice
           ? `
             <div class="result-warning urgent">
               <strong>Urgent symptom selected.</strong>
@@ -751,7 +1989,7 @@
       .map(input => input.value);
 
     if (symptoms.length === 0) {
-      alert("Please select at least one symptom to run the educational demo.");
+      showToast("Select at least one symptom to run the educational demo.");
       return;
     }
 
@@ -797,12 +2035,148 @@
 
       results.scrollIntoView({
         behavior: "smooth",
-        block: "start"
+        block: "nearest"
       });
     }
   });
 
   updateCount();
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    const cards = document.querySelectorAll(".stats .stat-card");
+
+    if (cards.length < 3) {
+        console.error("Dashboard statistic cards were not found.");
+        return;
+    }
+
+    const patientCard = cards[0];
+    const appointmentCard = cards[1];
+    const recordCard = cards[2];
+
+    patientCard.querySelector(".stat-label").textContent = "Total Patients";
+    appointmentCard.querySelector(".stat-label").textContent = "Total Appointments";
+    recordCard.querySelector(".stat-label").textContent = "Health Records";
+
+    const numberElements = [
+        patientCard.querySelector(".stat-number"),
+        appointmentCard.querySelector(".stat-number"),
+        recordCard.querySelector(".stat-number")
+    ];
+
+    numberElements.forEach(element => {
+        if (element) element.textContent = "Loading...";
+    });
+
+    try {
+        const response = await fetch("/api/dashboard/stats", {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Dashboard API returned HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.message || "Could not load dashboard statistics.");
+        }
+
+        numberElements[0].textContent =
+            Number(data.total_patients).toLocaleString();
+
+        numberElements[1].textContent =
+            Number(data.total_appointments).toLocaleString();
+
+        numberElements[2].textContent =
+            Number(data.total_health_records).toLocaleString();
+
+        [patientCard, appointmentCard, recordCard].forEach(card => {
+            const foot = card.querySelector(".stat-foot");
+            if (foot) foot.textContent = "Live database count";
+        });
+
+    } catch (error) {
+        console.error("Dashboard statistics error:", error);
+
+        numberElements.forEach(element => {
+            if (element) element.textContent = "Unavailable";
+        });
+
+        if (window.showToast) {
+            window.showToast("Could not load live dashboard statistics.");
+        }
+    }
+});
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  async function loadDashboardAppointments() {
+    const container = document.getElementById("dashboardAppointments");
+    if (!container) return;
+
+    const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[character]);
+
+    try {
+      const response = await fetch("/api/dashboard/upcoming-appointments", {
+        headers: { "Accept": "application/json" }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || `Request failed (${response.status})`);
+      }
+
+      const appointments = Array.isArray(data.appointments) ? data.appointments : [];
+      if (appointments.length === 0) {
+        container.innerHTML = '<div class="list-row"><div class="row-main"><strong>No upcoming appointments</strong><small>Scheduled appointments will appear here.</small></div></div>';
+        return;
+      }
+
+      container.innerHTML = appointments.map(appointment => {
+        const patient = [appointment.first_name, appointment.last_name].filter(Boolean).join(" ") || "Patient";
+        const dateText = appointment.appointment_date || "";
+        const date = new Date(dateText + "T00:00:00");
+        const displayDate = Number.isNaN(date.getTime()) ? dateText : date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+        const timeText = String(appointment.appointment_time || "").slice(0, 5);
+        let displayTime = timeText;
+        if (/^\d{2}:\d{2}$/.test(timeText)) {
+          const [hours, minutes] = timeText.split(":").map(Number);
+          displayTime = new Date(2000, 0, 1, hours, minutes).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+        }
+        const details = [appointment.reason, displayDate].filter(Boolean).join(" · ");
+        return `<div class="list-row">
+          <div class="person-avatar">🩺</div>
+          <div class="row-main">
+            <strong>${escapeHTML(patient)}</strong>
+            <small>${escapeHTML(details || "Appointment")}</small>
+            <small>${escapeHTML(appointment.clinician_name || "Clinician not assigned")}</small>
+          </div>
+          <div class="appointment-time">${escapeHTML(displayTime || "Time not set")}<small>${escapeHTML(appointment.status || "Scheduled")}</small></div>
+        </div>`;
+      }).join("");
+    } catch (error) {
+      console.error("Dashboard appointments could not be loaded:", error);
+      container.innerHTML = '<div class="list-row"><div class="row-main"><strong>Appointments unavailable</strong><small>Refresh the page or check the Flask server.</small></div></div>';
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadDashboardAppointments);
+  } else {
+    loadDashboardAppointments();
+  }
+})();
+</script>
+
 </body>
 </html>
